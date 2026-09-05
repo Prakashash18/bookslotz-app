@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"><style>input,textarea,select,button{box-sizing:border-box}@keyframes bsUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}@keyframes bsFade{from{opacity:0}to{opacity:1}}@keyframes bsPop{0%{transform:scale(.7);opacity:0}60%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}a{color:oklch(0.5 0.12 75)}a:hover{color:oklch(0.42 0.12 75)}</style></helmet>
+<div style="container-type:inline-size;min-height:100%;flex:1;display:flex;flex-direction:column;background:#f4f1ea;background-image:repeating-linear-gradient(180deg,rgba(0,0,0,0) 0 27px,rgba(26,24,21,0.045) 27px 28px);color:#1a1815;font-family:Figtree,system-ui,sans-serif;-webkit-font-smoothing:antialiased">
+ <div style="flex:1;min-height:0;display:flex;align-items:stretch;padding:clamp(14px,3cqw,30px)">
+
+  <sc-if value="{{ showRail }}">
+   <div style="flex:none;width:238px;padding:14px 30px 14px 12px;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;gap:9px">
+      <div style="width:11px;height:11px;background:oklch(0.55 0.13 75);transform:rotate(45deg);border-radius:2px"></div>
+      <span style="font-size:14px;font-weight:600;letter-spacing:-0.01em">BookSlot</span>
+    </div>
+    <div style="margin-top:11px;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#6e675f">For educators</div>
+
+    <div style="position:relative;margin-top:30px;display:flex;flex-direction:column;gap:2px">
+      <div style="position:absolute;left:11px;top:14px;bottom:14px;width:1px;background:#e0d9cd"></div>
+      <sc-for list="{{ railSteps }}" as="r" hint-placeholder-count="5">
+        <button onClick="{{ r.go }}" style="{{ r.rowStyle }}">
+          <span style="{{ r.dotStyle }}">{{ r.mark }}</span>
+          <span style="{{ r.labelStyle }}">{{ r.label }}</span>
+        </button>
+      </sc-for>
+    </div>
+
+    <div style="flex:1"></div>
+    <div style="padding-top:18px;border-top:1px solid #e0d9cd">
+      <div style="font-size:10.5px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#6e675f">This event</div>
+      <div style="margin-top:7px;font-size:13.5px;font-weight:600;line-height:1.3">{{ title }}</div>
+      <div style="margin-top:4px;font-size:12.5px;color:#5f5952;line-height:1.4">{{ railMeta }}</div>
+    </div>
+   </div>
+  </sc-if>
+
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column;background:#fdfcfa;border:1px solid #e6e0d6;border-radius:18px;box-shadow:0 1px 2px rgba(26,24,21,.04),0 18px 40px -26px rgba(26,24,21,.28);overflow:hidden">
+
+   <sc-if value="{{ showCompact }}">
+    <div style="flex:none;padding:15px 20px 13px;border-bottom:1px solid #f0eae1">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <div style="display:flex;align-items:center;gap:9px;min-width:0">
+          <div style="flex:none;width:9px;height:9px;background:oklch(0.55 0.13 75);transform:rotate(45deg);border-radius:2px"></div>
+          <span style="font-size:12px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#5f5952;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ stepCounter }} · {{ stepLabel }}</span>
+        </div>
+        <button onClick="{{ back }}" style="flex:none;border:0;background:none;padding:4px 2px;font:inherit;font-size:13px;color:#5f5952;cursor:pointer" style-hover="color:#1a1815">Back</button>
+      </div>
+      <div style="margin-top:12px;height:2px;background:#ece6dc;border-radius:2px">
+        <div style="height:100%;background:oklch(0.55 0.13 75);border-radius:2px;transition:width .45s cubic-bezier(.4,0,.2,1);width:{{ pct }}"></div>
+      </div>
+    </div>
+   </sc-if>
+
+   <sc-if value="{{ showSheetBack }}">
+    <div style="flex:none;display:flex;justify-content:flex-end;padding:16px 20px 0">
+      <button onClick="{{ back }}" style="border:0;background:none;padding:5px 2px;font:inherit;font-size:13.5px;color:#5f5952;cursor:pointer" style-hover="color:#1a1815">Back</button>
+    </div>
+   </sc-if>
+
+   <sc-if value="{{ isPub }}">
+    <div style="flex:none;padding:16px clamp(20px,4cqw,34px);border-bottom:1px solid #f0eae1;display:flex;align-items:center;justify-content:space-between;gap:14px">
+      <div style="display:flex;align-items:center;gap:9px;min-width:0">
+        <div style="flex:none;width:9px;height:9px;background:oklch(0.55 0.13 75);transform:rotate(45deg);border-radius:2px"></div>
+        <span style="font-size:12.5px;font-weight:600;color:#1a1815;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ title }}</span>
+      </div>
+      <span style="flex:none;font-size:12px;color:#5f5952;white-space:nowrap">{{ duration }} min each</span>
+    </div>
+   </sc-if>
+
+   <div style="flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;justify-content:center;padding:clamp(24px,5cqw,52px) clamp(20px,4.5cqw,52px)">
+    <div style="width:100%;max-width:600px;margin:0 auto">
+
+    <sc-if value="{{ s.welcome }}">
+      <div style="animation:bsUp .4s cubic-bezier(.2,.7,.3,1) both">
+        <div style="display:flex;align-items:center;gap:9px">
+          <div style="width:11px;height:11px;background:oklch(0.55 0.13 75);transform:rotate(45deg);border-radius:2px"></div>
+          <span style="font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#5f5952">BookSlot for educators</span>
+        </div>
+        <h1 style="margin:22px 0 0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(34px,8.4cqw,54px);line-height:1.04;letter-spacing:-0.015em;text-wrap:pretty">Set your hours once. Let the class book itself.</h1>
+        <p style="margin:16px 0 0;font-size:clamp(15px,2.6cqw,17px);line-height:1.55;color:#6b6560;max-width:40ch">Consultations, presentations, office hours, parent meetings. One link, no back-and-forth email.</p>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin-top:clamp(26px,5cqw,36px)">
+          <button onClick="{{ start }}" style="border:0;border-radius:11px;padding:16px 28px;background:#1a1815;color:#faf8f5;font:inherit;font-size:15.5px;font-weight:600;cursor:pointer;transition:.18s ease" style-hover="background:#37322b;transform:translateY(-1px)">Create booking</button>
+          <button onClick="{{ start }}" style="border:0;background:none;padding:6px 0;font:inherit;font-size:14.5px;color:#5f5952;cursor:pointer" style-hover="color:#1a1815">Sign in</button>
+        </div>
+        <div style="margin-top:clamp(28px,5cqw,42px);padding:20px;border:1px solid #ece6dc;border-radius:14px;background:#fbf9f5;display:flex;align-items:flex-start;gap:clamp(14px,3cqw,24px)">
+          <div style="flex:none;width:84px">
+            <div style="width:30px;height:30px;background:oklch(0.55 0.13 75);border-radius:9px"></div>
+            <div style="margin-top:10px;font-size:11px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#5f5952">You</div>
+            <div style="margin-top:3px;font-size:12.5px;color:#6b6560;line-height:1.35">One window of time</div>
+          </div>
+          <div style="flex:none;margin-top:15px;width:clamp(16px,4cqw,38px);height:1px;background:#ded7cc"></div>
+          <div style="flex:1;min-width:0">
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(13px,1fr));gap:7px;max-width:240px">
+              <sc-for list="{{ manyDots }}" as="p" hint-placeholder-count="18">
+                <div style="width:100%;aspect-ratio:1;border-radius:50%;border:1.5px solid #d8d0c3;background:#fdfcfa"></div>
+              </sc-for>
+            </div>
+            <div style="margin-top:13px;font-size:11px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#5f5952">Your class</div>
+            <div style="margin-top:3px;font-size:12.5px;color:#6b6560;line-height:1.4">Each student or group takes one slot, and it disappears for everyone else</div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.what }}">
+      <div style="animation:bsUp .4s cubic-bezier(.2,.7,.3,1) both">
+        <h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(32px,7.6cqw,48px);line-height:1.06;letter-spacing:-0.015em">What are you organising?</h1>
+        <input value="{{ title }}" onChange="{{ onTitle }}" placeholder="Office Hours — Week 6" style="width:100%;margin-top:clamp(24px,5cqw,34px);padding:0 0 12px;border:0;border-bottom:1.5px solid #ded7cc;background:none;font:inherit;font-size:clamp(20px,4.4cqw,26px);font-weight:500;color:#1a1815;outline:none;transition:border-color .2s" style-focus="border-color:oklch(0.55 0.13 75)">
+        <input value="{{ desc }}" onChange="{{ onDesc }}" placeholder="Add a short note for your students (optional)" style="width:100%;margin-top:20px;padding:0 0 10px;border:0;border-bottom:1px solid #ece7de;background:none;font:inherit;font-size:15px;color:#6b6560;outline:none">
+        <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:20px">
+          <sc-for list="{{ titleIdeas }}" as="t" hint-placeholder-count="3">
+            <button onClick="{{ t.use }}" style="padding:8px 13px;border:1px solid #e4ded4;border-radius:99px;background:none;font:inherit;font-size:12.5px;color:#5f5952;cursor:pointer;transition:.15s ease" style-hover="border-color:#1a1815;color:#1a1815">{{ t.label }}</button>
+          </sc-for>
+        </div>
+        <div style="margin-top:clamp(28px,6cqw,40px)">
+          <button onClick="{{ toAvail }}" style="border:0;border-radius:11px;padding:16px 28px;background:#1a1815;color:#faf8f5;font:inherit;font-size:15.5px;font-weight:600;cursor:pointer;transition:.18s ease" style-hover="background:#37322b">Continue</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.avail }}">
+      <div style="animation:bsUp .4s cubic-bezier(.2,.7,.3,1) both">
+        <h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(32px,7.6cqw,48px);line-height:1.06;letter-spacing:-0.015em">When are you available?</h1>
+
+        <sc-if value="{{ hasWindows }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:clamp(22px,5cqw,30px)">
+            <sc-for list="{{ windowCards }}" as="w" hint-placeholder-count="2">
+              <div style="display:flex;align-items:center;gap:14px;padding:16px 18px;background:#fff;border:1px solid #ece7de;border-radius:13px">
+                <div style="flex:none;width:20px;height:20px;border-radius:50%;background:oklch(0.96 0.03 75);color:oklch(0.44 0.11 75);display:grid;place-items:center;font-size:11px;font-weight:700">✓</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:14.5px;font-weight:600">{{ w.day }}</div>
+                  <div style="font-size:13.5px;color:#5f5952;margin-top:2px">{{ w.range }}</div>
+                </div>
+                <button onClick="{{ w.remove }}" style="flex:none;border:0;background:none;font:inherit;font-size:13px;color:#5f5952;cursor:pointer;padding:4px" style-hover="color:#1a1815">Remove</button>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ formOpen }}">
+          <div style="margin-top:clamp(22px,5cqw,30px);padding:20px;background:#fff;border:1px solid #ece7de;border-radius:13px">
+            <input type="date" value="{{ d.date }}" onChange="{{ onDate }}" style="width:100%;padding:12px 14px;border:1px solid #e4ded4;border-radius:10px;background:#fdfcfa;font:inherit;font-size:15.5px;font-weight:500;color:#1a1815;outline:none">
+            <div style="display:flex;gap:12px;margin-top:12px">
+              <label style="flex:1;min-width:0;display:block">
+                <span style="display:block;font-size:12px;font-weight:600;color:#5f5952;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:7px">From</span>
+                <input type="time" value="{{ d.from }}" onChange="{{ onFrom }}" style="width:100%;padding:12px 14px;border:1px solid #e4ded4;border-radius:10px;background:#fdfcfa;font:inherit;font-size:15.5px;font-weight:500;color:#1a1815;outline:none">
+              </label>
+              <label style="flex:1;min-width:0;display:block">
+                <span style="display:block;font-size:12px;font-weight:600;color:#5f5952;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:7px">To</span>
+                <input type="time" value="{{ d.to }}" onChange="{{ onTo }}" style="width:100%;padding:12px 14px;border:1px solid #e4ded4;border-radius:10px;background:#fdfcfa;font:inherit;font-size:15.5px;font-weight:500;color:#1a1815;outline:none">
+              </label>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin-top:clamp(26px,5cqw,36px)">
+          <button onClick="{{ availPrimary }}" style="border:0;border-radius:11px;padding:16px 28px;background:#1a1815;color:#faf8f5;font:inherit;font-size:15.5px;font-weight:600;cursor:pointer;transition:.18s ease;white-space:nowrap" style-hover="background:#37322b">{{ availPrimaryLabel }}</button>
+          <sc-if value="{{ showAddAnother }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ openForm }}" style="border:0;background:none;padding:6px 0;font:inherit;font-size:14.5px;color:#5f5952;cursor:pointer;white-space:nowrap" style-hover="color:#1a1815">+ Add another date</button>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.duration }}">
+      <div style="animation:bsUp .4s cubic-bezier(.2,.7,.3,1) both">
+        <h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(32px,7.6cqw,48px);line-height:1.06;letter-spacing:-0.015em">How much time does each student need?</h1>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:10px;margin-top:clamp(24px,5cqw,32px)">
+          <sc-for list="{{ durations }}" as="o" hint-placeholder-count="5">
+            <button onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button>
+          </sc-for>
+        </div>
+        <div style="margin-top:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span style="font-size:13.5px;color:#5f5952">Custom</span>
+          <input value="{{ customDur }}" onChange="{{ onCustom }}" placeholder="min" style="width:74px;padding:8px 10px;border:1px solid #e4ded4;border-radius:8px;background:#fff;font:inherit;font-size:14px;text-align:center;outline:none">
+        </div>
+
+        <div style="margin-top:clamp(24px,5cqw,32px);padding:20px;border:1px solid #ece6dc;border-radius:14px;background:#fbf9f5">
+          <div style="font-family:'Instrument Serif',Georgia,serif;font-size:clamp(24px,5cqw,32px);line-height:1.1">{{ possible }} possible slots</div>
+          <div style="margin-top:5px;font-size:13.5px;color:#5f5952">Enough for {{ possible }} students across {{ windowCount }} {{ dayWord }}.</div>
+          <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid #ece6dc">
+            <span style="font-size:14.5px;color:#6b6560">Class smaller than that?</span>
+            <input value="{{ maxIn }}" onChange="{{ onMax }}" placeholder="All" style="width:78px;padding:9px 12px;border:1px solid #e4ded4;border-radius:9px;background:#fff;font:inherit;font-size:15px;font-weight:600;text-align:center;color:#1a1815;outline:none" style-focus="border-color:oklch(0.55 0.13 75)">
+          </div>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin-top:clamp(26px,5cqw,36px)">
+          <button onClick="{{ toSlots }}" style="border:0;border-radius:11px;padding:16px 28px;background:#1a1815;color:#faf8f5;font:inherit;font-size:15.5px;font-weight:600;cursor:pointer;transition:.18s ease;white-space:nowrap" style-hover="background:#37322b">Generate slots</button>
+          <button onClick="{{ noop }}" style="border:0;background:none;padding:6px 0;font:inherit;font-size:14px;color:#5f5952;cursor:pointer;white-space:nowrap" style-hover="color:#1a1815">Advanced settings</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.slots }}">
+      <div style="animation:bsUp .4s cubic-bezier(.2,.7,.3,1) both">
+        <h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(32px,7.6cqw,48px);line-height:1.06;letter-spacing:-0.015em">Your schedule is ready</h1>
+        <p style="margin:12px 0 0;font-size:14.5px;color:#5f5952">Tap any slot to take it off the schedule.</p>
+        <div style="margin-top:clamp(22px,5cqw,30px);display:flex;flex-direction:column;gap:24px;max-height:300px;overflow:auto">
+          <sc-for list="{{ dayGroups }}" as="g" hint-placeholder-count="2">
+            <div>
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+                <span style="flex:none;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#6e675f">{{ g.long }}</span>
+                <span style="flex:1;height:1px;background:#ece6dc"></span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:8px">
+                <sc-for list="{{ g.slots }}" as="sl" hint-placeholder-count="6">
+                  <button onClick="{{ sl.toggle }}" style="{{ sl.style }}">{{ sl.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="margin-top:22px;padding-top:20px;border-top:1px solid #ece7de;font-size:15.5px;font-weight:600">{{ available }} students can book</div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin-top:clamp(24px,5cqw,32px)">
+          <button onClick="{{ toFields }}" style="border:0;border-radius:11px;padding:16px 28px;background:#1a1815;color:#faf8f5;font:inherit;font-size:15.5px;font-weight:600;cursor:pointer;transition:.18s ease;white-space:nowrap" style-hover="background:#37322b">Looks good</button>
+          <button onClick="{{ toAvail }}" style="border:0;background:none;padding:6px 0;font:inherit;font-size:14.5px;color:#5f5952;cursor:pointer;white-space:nowrap" style-hover="color:#1a1815">Adjust availability</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.fields }}">
+      <div style="animation:bsUp .4s cubic-bezier(.2,.7,.3,1) both">
+        <h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(32px,7.6cqw,48px);line-height:1.06;letter-spacing:-0.015em">What should students tell you?</h1>
+        <div style="display:flex;flex-direction:column;gap:9px;margin-top:clamp(22px,5cqw,30px)">
+          <sc-for list="{{ askedFields }}" as="f" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:#fff;border:1px solid #ece7de;border-radius:11px">
+              <div style="flex:none;width:18px;height:18px;border-radius:50%;background:oklch(0.96 0.03 75);color:oklch(0.44 0.11 75);display:grid;place-items:center;font-size:10px;font-weight:700">✓</div>
+              <span style="flex:1;font-size:14.5px;font-weight:500">{{ f.label }}</span>
+              <sc-if value="{{ f.removable }}" hint-placeholder-val="{{ true }}">
+                <button onClick="{{ f.remove }}" style="border:0;background:none;font:inherit;font-size:17px;line-height:1;color:#5f5952;cursor:pointer;padding:2px 5px" style-hover="color:#1a1815">×</button>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <div style="margin-top:26px">
+          <div style="font-size:14.5px;color:#6b6560;margin-bottom:11px">Need anything else?</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <sc-for list="{{ fieldChips }}" as="c" hint-placeholder-count="4">
+              <button onClick="{{ c.add }}" style="{{ c.style }}">{{ c.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="margin-top:clamp(28px,5cqw,38px)">
+          <button onClick="{{ toEmail }}" style="border:0;border-radius:11px;padding:16px 28px;background:#1a1815;color:#faf8f5;font:inherit;font-size:15.5px;font-weight:600;cursor:pointer;transition:.18s ease" style-hover="background:#37322b">Continue</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.email }}">
+      <div style="animation:bsUp .4s cubic-bezier(.2,.7,.3,1) both">
+        <h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(32px,7.6cqw,48px);line-height:1.06;letter-spacing:-0.015em">Send a confirmation email?</h1>
+        <div style="margin-top:clamp(22px,5cqw,30px);background:#fff;border:1px solid #ece7de;border-radius:13px;overflow:hidden">
+          <div style="padding:11px 16px;border-bottom:1px solid #f2ede5;font-size:12px;color:#5f5952">To: student@example.edu</div>
+          <div style="padding:20px 18px 22px">
+            <div style="font-size:15.5px;font-weight:600">You're booked — {{ title }}</div>
+            <div style="margin-top:14px;display:flex;flex-direction:column;gap:5px;font-size:14px;color:#6b6560">
+              <div>{{ sampleDay }}</div>
+              <div>{{ sampleTime }}</div>
+              <div>{{ location }}</div>
+            </div>
+            <div style="margin-top:16px;height:9px;width:74%;background:#f2ede5;border-radius:5px"></div>
+            <div style="margin-top:7px;height:9px;width:52%;background:#f2ede5;border-radius:5px"></div>
+            <div style="margin-top:18px;display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+              <span style="padding:8px 14px;background:oklch(0.96 0.03 75);color:oklch(0.4 0.11 75);border-radius:7px;font-size:12.5px;font-weight:600">Add to calendar</span>
+              <span style="font-size:12.5px;color:#5f5952;text-decoration:underline">Change or cancel</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:18px">
+          <button onClick="{{ emailYes }}" style="{{ emailYesStyle }}">Yes, send confirmation</button>
+          <button onClick="{{ emailNo }}" style="{{ emailNoStyle }}">No email</button>
+        </div>
+        <sc-if value="{{ sendEmail }}" hint-placeholder-val="{{ true }}">
+          <p style="margin:14px 0 0;font-size:13.5px;color:#5f5952;line-height:1.5">Students receive their date, time and room automatically.</p>
+        </sc-if>
+        <div style="margin-top:clamp(26px,5cqw,36px)">
+          <button onClick="{{ toReview }}" style="border:0;border-radius:11px;padding:16px 28px;background:#1a1815;color:#faf8f5;font:inherit;font-size:15.5px;font-weight:600;cursor:pointer;transition:.18s ease" style-hover="background:#37322b">Continue</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.review }}">
+      <div style="animation:bsUp .4s cubic-bezier(.2,.7,.3,1) both">
+        <h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(32px,7.6cqw,48px);line-height:1.06;letter-spacing:-0.015em">Ready to share</h1>
+        <div style="margin-top:clamp(22px,5cqw,30px);display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start">
+          <div style="flex:1 1 190px;min-width:0;background:#fff;border:1px solid #ece7de;border-radius:13px;padding:16px;box-shadow:0 1px 2px rgba(26,24,21,.04)">
+            <div style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:#6e675f">bookslot.app</div>
+            <div style="margin-top:9px;font-family:'Instrument Serif',Georgia,serif;font-size:17px;line-height:1.15">{{ title }}</div>
+            <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:5px">
+              <div style="height:22px;border:1px solid #ece7de;border-radius:5px;background:#fdfcfa"></div>
+              <div style="height:22px;border:1px solid oklch(0.85 0.06 75);border-radius:5px;background:oklch(0.97 0.025 75)"></div>
+              <div style="height:22px;border:1px solid #ece7de;border-radius:5px;background:#fdfcfa"></div>
+              <div style="height:22px;border:1px solid #ece7de;border-radius:5px;background:#fdfcfa"></div>
+            </div>
+            <div style="margin-top:12px;height:26px;background:#1a1815;border-radius:6px"></div>
+          </div>
+          <div style="flex:1 1 220px;min-width:0;display:flex;flex-direction:column;gap:12px">
+            <div>
+              <div style="font-size:11.5px;letter-spacing:0.07em;text-transform:uppercase;color:#6e675f">Event</div>
+              <div style="font-size:15.5px;font-weight:600;margin-top:3px">{{ title }}</div>
+            </div>
+            <div>
+              <div style="font-size:11.5px;letter-spacing:0.07em;text-transform:uppercase;color:#6e675f">Slots</div>
+              <div style="font-size:15.5px;font-weight:600;margin-top:3px">{{ available }} slots · {{ duration }} minutes each</div>
+            </div>
+            <div>
+              <div style="font-size:11.5px;letter-spacing:0.07em;text-transform:uppercase;color:#6e675f">Students give</div>
+              <div style="font-size:15.5px;font-weight:600;margin-top:3px">{{ fieldSummary }}</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:clamp(26px,5cqw,36px)">
+          <button onClick="{{ publish }}" style="border:0;border-radius:11px;padding:16px 28px;background:#1a1815;color:#faf8f5;font:inherit;font-size:15.5px;font-weight:600;cursor:pointer;transition:.18s ease" style-hover="background:#37322b">Publish booking page</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.published }}">
+      <div style="animation:bsUp .4s cubic-bezier(.2,.7,.3,1) both">
+        <div style="width:38px;height:38px;border-radius:50%;background:oklch(0.55 0.13 75);color:#fff;display:grid;place-items:center;font-size:18px;animation:bsPop .5s cubic-bezier(.3,1.4,.5,1) both">✓</div>
+        <h1 style="margin:20px 0 0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(32px,7.6cqw,48px);line-height:1.06;letter-spacing:-0.015em">Your booking page is live</h1>
+        <p style="margin:14px 0 0;font-size:15px;color:#6b6560;line-height:1.55">Send this to your class. {{ available }} slots are open.</p>
+        <div style="margin-top:clamp(20px,4cqw,26px);display:flex;align-items:center;gap:10px;padding:15px 18px;background:#fff;border:1px solid #ece7de;border-radius:12px">
+          <span style="flex:1;min-width:0;font-size:14.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ url }}</span>
+          <span style="flex:none;font-size:12.5px;color:oklch(0.44 0.11 75);font-weight:600;opacity:{{ copiedOpacity }};transition:opacity .3s">Copied</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin-top:clamp(24px,5cqw,32px)">
+          <button onClick="{{ copy }}" style="border:0;border-radius:11px;padding:16px 28px;background:#1a1815;color:#faf8f5;font:inherit;font-size:15.5px;font-weight:600;cursor:pointer;transition:.18s ease" style-hover="background:#37322b">Copy link</button>
+          <button onClick="{{ toPublic }}" style="border:0;background:none;padding:6px 0;font:inherit;font-size:14.5px;color:#5f5952;cursor:pointer;white-space:nowrap" style-hover="color:#1a1815">View booking page</button>
+        </div>
+        <div style="margin-top:28px;padding-top:18px;border-top:1px solid #ece7de">
+          <button onClick="{{ toDash }}" style="border:0;background:none;padding:4px 0;font:inherit;font-size:13.5px;color:#5f5952;cursor:pointer" style-hover="color:#1a1815">••• More</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.dash }}">
+      <div style="animation:bsUp .4s cubic-bezier(.2,.7,.3,1) both">
+        <h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,6.4cqw,40px);line-height:1.08;letter-spacing:-0.015em">Your events</h1>
+        <div style="margin-top:clamp(20px,4cqw,26px);background:#fff;border:1px solid #ece7de;border-radius:14px;padding:22px">
+          <div style="display:flex;align-items:flex-start;gap:12px">
+            <div style="flex:1;min-width:0">
+              <div style="font-size:17px;font-weight:600;letter-spacing:-0.01em">{{ title }}</div>
+              <div style="margin-top:6px;font-size:14px;color:#5f5952">{{ bookedCount }} of {{ available }} students booked · {{ remaining }} slots still open</div>
+            </div>
+            <button onClick="{{ noop }}" style="flex:none;border:0;background:none;font:inherit;font-size:15px;color:#5f5952;cursor:pointer;padding:2px 6px;letter-spacing:0.06em" style-hover="color:#1a1815">•••</button>
+          </div>
+          <div style="margin-top:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(13px,1fr));gap:6px">
+            <sc-for list="{{ seatDots }}" as="p" hint-placeholder-count="18">
+              <div style="{{ p.style }}"></div>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin-top:20px">
+            <button onClick="{{ toPublic }}" style="border:0;border-radius:10px;padding:13px 22px;background:#1a1815;color:#faf8f5;font:inherit;font-size:14.5px;font-weight:600;cursor:pointer;transition:.18s ease" style-hover="background:#37322b">Manage</button>
+            <button onClick="{{ copy }}" style="border:0;background:none;padding:6px 0;font:inherit;font-size:14px;color:#5f5952;cursor:pointer;white-space:nowrap" style-hover="color:#1a1815">Copy link</button>
+          </div>
+        </div>
+        <div style="margin-top:22px">
+          <button onClick="{{ restart }}" style="border:0;background:none;padding:4px 0;font:inherit;font-size:13.5px;color:#5f5952;cursor:pointer" style-hover="color:#1a1815">Start over</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.pEvent }}">
+      <div style="animation:bsUp .4s cubic-bezier(.2,.7,.3,1) both">
+        <h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(34px,8cqw,52px);line-height:1.04;letter-spacing:-0.015em;text-wrap:pretty">{{ title }}</h1>
+        <div style="display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:20px;padding:16px 0;border-top:1px solid #ece6dc;border-bottom:1px solid #ece6dc">
+          <div><div style="font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#5f5952">Where</div><div style="margin-top:3px;font-size:14.5px;font-weight:500">{{ location }}</div></div>
+          <div><div style="font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#5f5952">Length</div><div style="margin-top:3px;font-size:14.5px;font-weight:500">{{ duration }} minutes</div></div>
+          <div><div style="font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#5f5952">Open</div><div style="margin-top:3px;font-size:14.5px;font-weight:500">{{ freeTotal }} slots left</div></div>
+        </div>
+        <p style="margin:20px 0 0;font-size:clamp(15px,2.6cqw,17px);line-height:1.6;color:#6b6560;max-width:42ch">{{ desc }}</p>
+        <div style="margin-top:clamp(26px,5cqw,36px)">
+          <button onClick="{{ pStart }}" style="border:0;border-radius:11px;padding:16px 28px;background:#1a1815;color:#faf8f5;font:inherit;font-size:15.5px;font-weight:600;cursor:pointer;transition:.18s ease" style-hover="background:#37322b;transform:translateY(-1px)">Choose a time</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.pDay }}">
+      <div style="animation:bsUp .4s cubic-bezier(.2,.7,.3,1) both">
+        <h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(30px,7cqw,44px);line-height:1.06;letter-spacing:-0.015em">Which day works for you?</h1>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:clamp(24px,5cqw,32px)">
+          <sc-for list="{{ pubDays }}" as="g" hint-placeholder-count="2">
+            <button onClick="{{ g.pick }}" style="{{ g.style }}">
+              <span style="display:block;font-size:clamp(20px,4cqw,24px);font-weight:600;letter-spacing:-0.01em">{{ g.weekday }}</span>
+              <span style="display:block;margin-top:4px;font-size:14.5px;color:#5f5952">{{ g.dayMonth }} · {{ g.freeLabel }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.pTime }}">
+      <div style="animation:bsUp .4s cubic-bezier(.2,.7,.3,1) both">
+        <h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(30px,7cqw,44px);line-height:1.06;letter-spacing:-0.015em">{{ pickedDayLong }}</h1>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:9px;margin-top:clamp(24px,5cqw,32px);max-height:300px;overflow:auto">
+          <sc-for list="{{ pubTimes }}" as="t" hint-placeholder-count="8">
+            <button onClick="{{ t.pick }}" disabled="{{ t.taken }}" style="{{ t.style }}">{{ t.label }}</button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ hasPick }}">
+          <div style="margin-top:24px;padding-top:20px;border-top:1px solid #ece7de;animation:bsFade .3s ease both">
+            <div style="font-size:clamp(18px,3.6cqw,22px);font-weight:600;letter-spacing:-0.01em">{{ pickedRange }}</div>
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin-top:18px">
+              <button onClick="{{ timePrimary }}" style="border:0;border-radius:11px;padding:16px 28px;background:#1a1815;color:#faf8f5;font:inherit;font-size:15.5px;font-weight:600;cursor:pointer;transition:.18s ease" style-hover="background:#37322b">{{ timePrimaryLabel }}</button>
+              <button onClick="{{ toPDay }}" style="border:0;background:none;padding:6px 0;font:inherit;font-size:14.5px;color:#5f5952;cursor:pointer;white-space:nowrap" style-hover="color:#1a1815">Change day</button>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ noPick }}" hint-placeholder-val="{{ true }}">
+          <div style="margin-top:24px">
+            <button onClick="{{ toPDay }}" style="border:0;background:none;padding:6px 0;font:inherit;font-size:14.5px;color:#5f5952;cursor:pointer;white-space:nowrap" style-hover="color:#1a1815">Change day</button>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.pDetails }}">
+      <div style="animation:bsUp .4s cubic-bezier(.2,.7,.3,1) both">
+        <h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(30px,7cqw,44px);line-height:1.06;letter-spacing:-0.015em">Your details</h1>
+        <div style="display:flex;flex-direction:column;gap:18px;margin-top:clamp(24px,5cqw,32px)">
+          <sc-for list="{{ inputs }}" as="i" hint-placeholder-count="3">
+            <label style="display:block">
+              <span style="display:block;font-size:12px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#5f5952;margin-bottom:8px">{{ i.label }}</span>
+              <input value="{{ i.value }}" onChange="{{ i.onChange }}" placeholder="{{ i.placeholder }}" style="width:100%;padding:14px 16px;border:1px solid #e4ded4;border-radius:11px;background:#fff;font:inherit;font-size:16px;color:#1a1815;outline:none;transition:border-color .2s" style-focus="border-color:oklch(0.55 0.13 75)">
+            </label>
+          </sc-for>
+        </div>
+        <div style="margin-top:clamp(26px,5cqw,36px)">
+          <button onClick="{{ toPReview }}" style="border:0;border-radius:11px;padding:16px 28px;background:#1a1815;color:#faf8f5;font:inherit;font-size:15.5px;font-weight:600;cursor:pointer;transition:.18s ease" style-hover="background:#37322b">Review booking</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.pReview }}">
+      <div style="animation:bsUp .4s cubic-bezier(.2,.7,.3,1) both">
+        <h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,6.4cqw,40px);line-height:1.08;letter-spacing:-0.015em">{{ title }}</h1>
+        <div style="margin-top:clamp(22px,5cqw,28px);padding:22px;background:#fff;border:1px solid #ece7de;border-radius:13px;display:flex;flex-direction:column;gap:16px">
+          <div>
+            <div style="font-size:clamp(19px,3.8cqw,23px);font-weight:600;letter-spacing:-0.01em">{{ pickedDayLong }}</div>
+            <div style="margin-top:4px;font-size:16px;color:#6b6560">{{ pickedRange }}</div>
+            <div style="margin-top:4px;font-size:14px;color:#5f5952">{{ location }}</div>
+          </div>
+          <div style="height:1px;background:#f2ede5"></div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <sc-for list="{{ reviewRows }}" as="r" hint-placeholder-count="3">
+              <div style="display:flex;gap:12px;font-size:14.5px">
+                <span style="flex:none;width:104px;color:#5f5952">{{ r.label }}</span>
+                <span style="flex:1;min-width:0;font-weight:500">{{ r.value }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin-top:clamp(24px,5cqw,32px)">
+          <button onClick="{{ confirm }}" style="border:0;border-radius:11px;padding:16px 28px;background:#1a1815;color:#faf8f5;font:inherit;font-size:15.5px;font-weight:600;cursor:pointer;transition:.18s ease" style-hover="background:#37322b">Confirm booking</button>
+          <button onClick="{{ toPTime }}" style="border:0;background:none;padding:6px 0;font:inherit;font-size:14.5px;color:#5f5952;cursor:pointer" style-hover="color:#1a1815">Change</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.pDone }}">
+      <div style="animation:bsUp .4s cubic-bezier(.2,.7,.3,1) both">
+        <div style="width:38px;height:38px;border-radius:50%;background:oklch(0.55 0.13 75);color:#fff;display:grid;place-items:center;font-size:18px;animation:bsPop .5s cubic-bezier(.3,1.4,.5,1) both">✓</div>
+        <h1 style="margin:20px 0 0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(32px,7.6cqw,48px);line-height:1.06;letter-spacing:-0.015em">You're booked</h1>
+        <div style="margin-top:clamp(20px,4cqw,26px);padding:18px 20px;border:1px solid #ece6dc;border-radius:13px;background:#fbf9f5">
+          <div style="font-size:clamp(19px,3.8cqw,23px);font-weight:600;letter-spacing:-0.01em">{{ pickedDayLong }}</div>
+          <div style="margin-top:4px;font-size:16px;color:#6b6560">{{ pickedRange }}</div>
+          <div style="margin-top:4px;font-size:14px;color:#5f5952">{{ location }}</div>
+        </div>
+        <sc-if value="{{ sendEmail }}" hint-placeholder-val="{{ true }}">
+          <p style="margin:18px 0 0;font-size:14.5px;line-height:1.6;color:#5f5952">A confirmation email has been sent to<br><span style="color:#1a1815;font-weight:500">{{ bookerEmail }}</span>, with a link to change this time.</p>
+        </sc-if>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin-top:clamp(24px,5cqw,32px)">
+          <button onClick="{{ noop }}" style="border:0;border-radius:11px;padding:16px 28px;background:#1a1815;color:#faf8f5;font:inherit;font-size:15.5px;font-weight:600;cursor:pointer;transition:.18s ease" style-hover="background:#37322b">Add to calendar</button>
+          <button onClick="{{ toManage }}" style="border:0;background:none;padding:6px 0;font:inherit;font-size:14.5px;color:#5f5952;cursor:pointer;white-space:nowrap" style-hover="color:#1a1815">Change my booking</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.pManage }}">
+      <div style="animation:bsUp .4s cubic-bezier(.2,.7,.3,1) both">
+        <div style="font-size:11.5px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:#5f5952">Your booking</div>
+        <h1 style="margin:14px 0 0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(30px,7cqw,44px);line-height:1.06;letter-spacing:-0.015em">{{ manageDayLong }}</h1>
+        <div style="margin-top:8px;font-size:clamp(17px,3.4cqw,21px);color:#6b6560">{{ manageRange }}</div>
+        <div style="margin-top:clamp(20px,4cqw,26px);padding:18px 20px;border:1px solid #ece6dc;border-radius:13px;background:#fbf9f5;display:flex;flex-direction:column;gap:7px">
+          <sc-for list="{{ reviewRows }}" as="r" hint-placeholder-count="3">
+            <div style="display:flex;gap:12px;font-size:14.5px">
+              <span style="flex:none;width:104px;color:#5f5952">{{ r.label }}</span>
+              <span style="flex:1;min-width:0;font-weight:500">{{ r.value }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <p style="margin:16px 0 0;font-size:13.5px;line-height:1.55;color:#5f5952">This page is the private link in your confirmation email. Anyone with it can change this booking.</p>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin-top:clamp(24px,5cqw,32px)">
+          <button onClick="{{ startReschedule }}" style="border:0;border-radius:11px;padding:16px 28px;background:#1a1815;color:#faf8f5;font:inherit;font-size:15.5px;font-weight:600;cursor:pointer;transition:.18s ease" style-hover="background:#37322b">Reschedule</button>
+          <button onClick="{{ cancelBooking }}" style="border:0;background:none;padding:6px 0;font:inherit;font-size:14.5px;color:#5f5952;cursor:pointer;white-space:nowrap" style-hover="color:#1a1815">Cancel booking</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.pMoved }}">
+      <div style="animation:bsUp .4s cubic-bezier(.2,.7,.3,1) both">
+        <div style="width:38px;height:38px;border-radius:50%;background:oklch(0.55 0.13 75);color:#fff;display:grid;place-items:center;font-size:18px;animation:bsPop .5s cubic-bezier(.3,1.4,.5,1) both">✓</div>
+        <h1 style="margin:20px 0 0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(32px,7.6cqw,48px);line-height:1.06;letter-spacing:-0.015em">Your time has moved</h1>
+        <div style="margin-top:clamp(20px,4cqw,26px);display:flex;flex-wrap:wrap;align-items:center;gap:14px">
+          <div style="flex:0 1 190px;min-width:0;padding:14px 16px;border:1px dashed #ded7cc;border-radius:12px;color:#5f5952">
+            <div style="font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase">Was</div>
+            <div style="margin-top:4px;font-size:14.5px;text-decoration:line-through">{{ prevDayLong }}</div>
+            <div style="font-size:14.5px;text-decoration:line-through">{{ prevRange }}</div>
+          </div>
+          <div style="flex:0 1 190px;min-width:0;padding:14px 16px;border:1.5px solid oklch(0.55 0.13 75);border-radius:12px;background:oklch(0.975 0.022 75)">
+            <div style="font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:oklch(0.4 0.11 75)">Now</div>
+            <div style="margin-top:4px;font-size:15px;font-weight:600">{{ manageDayLong }}</div>
+            <div style="font-size:15px;font-weight:600">{{ manageRange }}</div>
+          </div>
+        </div>
+        <p style="margin:18px 0 0;font-size:14.5px;line-height:1.6;color:#5f5952">Your old slot is open again for the rest of the class. An updated email is on its way to <span style="color:#1a1815;font-weight:500">{{ bookerEmail }}</span>.</p>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin-top:clamp(24px,5cqw,32px)">
+          <button onClick="{{ noop }}" style="border:0;border-radius:11px;padding:16px 28px;background:#1a1815;color:#faf8f5;font:inherit;font-size:15.5px;font-weight:600;cursor:pointer;transition:.18s ease" style-hover="background:#37322b">Add to calendar</button>
+          <button onClick="{{ toManage }}" style="border:0;background:none;padding:6px 0;font:inherit;font-size:14.5px;color:#5f5952;cursor:pointer;white-space:nowrap" style-hover="color:#1a1815">View booking</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.pCancelled }}">
+      <div style="animation:bsUp .4s cubic-bezier(.2,.7,.3,1) both">
+        <h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(30px,7cqw,44px);line-height:1.06;letter-spacing:-0.015em">Your booking is cancelled</h1>
+        <p style="margin:16px 0 0;font-size:15.5px;line-height:1.6;color:#6b6560;max-width:42ch">{{ prevDayLong }}, {{ prevRange }} is open again. You can still take another time while slots last.</p>
+        <div style="margin-top:clamp(24px,5cqw,34px)">
+          <button onClick="{{ pStart }}" style="border:0;border-radius:11px;padding:16px 28px;background:#1a1815;color:#faf8f5;font:inherit;font-size:15.5px;font-weight:600;cursor:pointer;transition:.18s ease" style-hover="background:#37322b">Choose another time</button>
+        </div>
+      </div>
+    </sc-if>
+
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:980,&quot;height&quot;:700},&quot;app&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;},&quot;wide&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const ORG = ['welcome','what','avail','duration','slots','fields','email','review','published'];
+const PUB = ['pEvent','pDay','pTime','pDetails','pReview','pDone','pManage','pMoved','pCancelled'];
+const CHIPS = ['Group / Team','Student ID','Notes','Custom field'];
+const IDEAS = ['Office Hours — Week 6','Final Project Presentations','Parent Meetings'];
+const STEPS = [
+  {label:'What it is', go:'what', screens:['what']},
+  {label:'When you\u2019re free', go:'avail', screens:['avail']},
+  {label:'How long each', go:'duration', screens:['duration','slots']},
+  {label:'What to ask', go:'fields', screens:['fields','email']},
+  {label:'Share it', go:'review', screens:['review','published']}
+];
+
+function mins(t){const p=String(t||'0:0').split(':');return (+p[0])*60+(+p[1]||0);}
+function hhmm(m){return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');}
+function fmtT(m){let h=Math.floor(m/60);const mm=m%60;const ap=h>=12?'PM':'AM';h=h%12||12;return h+':'+String(mm).padStart(2,'0')+' '+ap;}
+function fmtTShort(m){let h=Math.floor(m/60);const mm=m%60;h=h%12||12;return h+':'+String(mm).padStart(2,'0');}
+function dObj(d){return new Date(d+'T00:00:00');}
+function wk(d){return dObj(d).toLocaleDateString('en-GB',{weekday:'long'});}
+function dm(d){return dObj(d).toLocaleDateString('en-GB',{day:'numeric',month:'long'});}
+function dmShort(d){return dObj(d).toLocaleDateString('en-GB',{day:'numeric',month:'short'});}
+
+const TILE = 'padding:18px 12px;border-radius:12px;background:#fff;font:inherit;font-size:17px;font-weight:600;color:#1a1815;cursor:pointer;transition:.16s ease;text-align:center;';
+const TILE_OFF = TILE+'border:1px solid #e8e3db;';
+const TILE_ON = TILE+'border:1.5px solid oklch(0.55 0.13 75);background:oklch(0.975 0.022 75);box-shadow:0 0 0 3px oklch(0.94 0.04 75 / .5);';
+
+const SLOT = 'padding:11px 8px;border-radius:9px;font:inherit;font-size:13.5px;font-weight:500;cursor:pointer;transition:.14s ease;text-align:center;';
+const SLOT_ON = SLOT+'border:1px solid #e8e3db;background:#fff;color:#1a1815;';
+const SLOT_OFF = SLOT+'border:1px dashed #ded7cc;background:none;color:#5f5952;text-decoration:line-through;';
+
+const TIME = 'padding:15px 8px;border-radius:10px;font:inherit;font-size:15.5px;font-weight:600;transition:.16s ease;text-align:center;';
+const TIME_FREE = TIME+'border:1px solid #e8e3db;background:#fff;color:#1a1815;cursor:pointer;';
+const TIME_SEL = TIME+'border:1.5px solid oklch(0.55 0.13 75);background:oklch(0.975 0.022 75);color:oklch(0.34 0.1 75);cursor:pointer;box-shadow:0 0 0 3px oklch(0.94 0.04 75 / .5);';
+const TIME_TAKEN = TIME+'border:1px dashed #e8e3db;background:none;color:#a39b91;cursor:not-allowed;';
+
+const DAY = 'width:100%;text-align:left;padding:20px 22px;border-radius:14px;background:#fff;font:inherit;cursor:pointer;transition:.16s ease;';
+const DAY_OFF = DAY+'border:1px solid #e8e3db;';
+const DAY_ON = DAY+'border:1.5px solid oklch(0.55 0.13 75);background:oklch(0.975 0.022 75);';
+
+const CHIP = 'padding:10px 16px;border-radius:99px;font:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:.16s ease;';
+const CHIP_OFF = CHIP+'border:1px solid #e4ded4;background:none;color:#5f5952;';
+const CHIP_ON = CHIP+'border:1px solid oklch(0.85 0.06 75);background:oklch(0.975 0.022 75);color:oklch(0.4 0.11 75);';
+
+const CHOICE = 'padding:16px 18px;border-radius:12px;font:inherit;font-size:15px;font-weight:600;cursor:pointer;transition:.16s ease;text-align:center;';
+const CHOICE_OFF = CHOICE+'border:1px solid #e8e3db;background:#fff;color:#5f5952;';
+const CHOICE_ON = CHOICE+'border:1.5px solid oklch(0.55 0.13 75);background:oklch(0.975 0.022 75);color:oklch(0.34 0.1 75);';
+
+const ROW = 'display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:7px 0;border:0;background:none;font:inherit;cursor:pointer;position:relative;';
+const DOT = 'flex:none;width:23px;height:23px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;box-sizing:border-box;';
+const DOT_NOW = DOT+'background:oklch(0.55 0.13 75);color:#fff;';
+const DOT_DONE = DOT+'background:oklch(0.94 0.04 75);color:oklch(0.4 0.11 75);border:1px solid oklch(0.85 0.06 75);';
+const DOT_TODO = DOT+'background:#f4f1ea;color:#6e675f;border:1px solid #ded7cc;';
+const LBL = 'font-size:13.5px;line-height:1.3;';
+const LBL_NOW = LBL+'font-weight:600;color:#1a1815;';
+const LBL_DONE = LBL+'font-weight:500;color:#5f5952;';
+const LBL_TODO = LBL+'font-weight:400;color:#6e675f;';
+
+const SEAT = 'width:100%;aspect-ratio:1;border-radius:50%;box-sizing:border-box;';
+const SEAT_BOOKED = SEAT+'background:oklch(0.55 0.13 75);';
+const SEAT_FREE = SEAT+'border:1.5px solid #ded7cc;';
+
+class Component extends DCLogic {
+  a(){ return this.props.app || {}; }
+  set(p){ const a=this.a(); if(a.set) a.set(p); }
+  go(sc){ this.set({screen:sc, copied:false}); }
+
+  gen(){
+    const a=this.a();
+    const dur=Math.max(5, +a.duration || 20);
+    const ws=(a.windows||[]).slice().sort((x,y)=> x.date<y.date?-1:1);
+    const out=[];
+    ws.forEach(w=>{ const e=mins(w.to); for(let st=mins(w.from); st+dur<=e; st+=dur){ out.push({key:w.date+'T'+hhmm(st), date:w.date, start:st, end:st+dur}); } });
+    return out;
+  }
+  capped(){ const a=this.a(); const all=this.gen(); const m=parseInt(a.maxBookings,10); return (m>0)?all.slice(0,m):all; }
+  active(){ const a=this.a(); return this.capped().filter(s=>!(a.off||[]).includes(s.key)); }
+  groups(list){
+    const out=[]; const idx={};
+    list.forEach(s=>{ if(idx[s.date]===undefined){ idx[s.date]=out.length; out.push({date:s.date, slots:[]}); } out[idx[s.date]].slots.push(s); });
+    return out;
+  }
+
+  renderVals(){
+    const a=this.a();
+    const sc=a.screen||'welcome';
+    const s={}; ORG.concat(PUB,['dash']).forEach(k=>s[k]= sc===k);
+    const oi=ORG.indexOf(sc);
+    const isOrg = oi>=0 || sc==='dash';
+    const wide = this.props.wide!==false;
+    const all=this.gen(), act=this.active();
+    const dur=+a.duration||20;
+    const booked=(a.booked||[]).filter(k=>act.some(x=>x.key===k));
+    const picked=act.find(x=>x.key===a.pSlot)||null;
+    const det=a.pDetails||{};
+    const extra=a.fields||[];
+    const stepIdx=STEPS.findIndex(st=>st.screens.indexOf(sc)>=0);
+    const inFlow = oi>=1;
+
+    const set=p=>this.set(p);
+    const upDet=(k)=>e=>set({pDetails:Object.assign({},det,{[k]:e.target.value})});
+
+    const vals={
+      s, isOrg, isPub: PUB.indexOf(sc)>=0, wide,
+      showRail: wide && inFlow,
+      showCompact: !wide && inFlow,
+      showSheetBack: wide && inFlow && sc!=='published',
+      stepLabel: stepIdx>=0? STEPS[stepIdx].label : '',
+      stepCounter: stepIdx>=0? 'Step '+(stepIdx+1)+' of 5' : '',
+      pct: (stepIdx>=0? Math.round((stepIdx+1)/5*100) : 0)+'%',
+      back: ()=>{ if(oi>0) this.go(ORG[oi-1]); },
+      noop: ()=>{},
+      title: a.title||'', desc: a.desc||'', location: a.location||'',
+      onTitle: e=>set({title:e.target.value}),
+      onDesc: e=>set({desc:e.target.value}),
+      titleIdeas: IDEAS.map(t=>({label:t, use:()=>set({title:t})})),
+      start: ()=>this.go('what'),
+      toAvail: ()=>this.go('avail'),
+      toSlots: ()=>this.go('slots'),
+      toFields: ()=>this.go('fields'),
+      toEmail: ()=>this.go('email'),
+      toReview: ()=>this.go('review'),
+      publish: ()=>this.go('published'),
+      toDash: ()=>this.go('dash'),
+      toPublic: ()=>this.go('pEvent'),
+      restart: ()=>set({screen:'welcome'}),
+      url: 'bookslot.app/b/'+(a.title||'event').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''),
+      copiedOpacity: a.copied?1:0,
+      copy: ()=>set({copied:true}),
+      duration: dur, possible: all.length, available: act.length,
+      windowCount: (a.windows||[]).length,
+      dayWord: (a.windows||[]).length===1? 'day' : 'days',
+      maxIn: a.maxBookings||'',
+      onMax: e=>set({maxBookings:e.target.value.replace(/[^0-9]/g,'')}),
+      customDur: a.customDur||'',
+      onCustom: e=>{ const v=e.target.value.replace(/[^0-9]/g,''); set({customDur:v, duration: v?+v:dur}); },
+      sendEmail: a.sendEmail!==false,
+      emailYes: ()=>set({sendEmail:true}),
+      emailNo: ()=>set({sendEmail:false}),
+      emailYesStyle: a.sendEmail!==false?CHOICE_ON:CHOICE_OFF,
+      emailNoStyle: a.sendEmail===false?CHOICE_ON:CHOICE_OFF,
+      bookedCount: booked.length,
+      remaining: Math.max(0, act.length-booked.length),
+      freeTotal: Math.max(0, act.length-booked.length),
+      manyDots: new Array(18).fill(0).map(()=>({})),
+      seatDots: act.map(sl=>({style: (a.booked||[]).includes(sl.key)?SEAT_BOOKED:SEAT_FREE})),
+      bookerEmail: det.email || 'student@example.edu',
+      railMeta: act.length? act.length+' slots · '+dur+' min each' : dur+' min each'
+    };
+
+    vals.railSteps = STEPS.map((st,i)=>({
+      label: st.label,
+      mark: i<stepIdx? '✓' : String(i+1),
+      rowStyle: ROW,
+      dotStyle: i===stepIdx? DOT_NOW : (i<stepIdx? DOT_DONE : DOT_TODO),
+      labelStyle: i===stepIdx? LBL_NOW : (i<stepIdx? LBL_DONE : LBL_TODO),
+      go: ()=>this.go(st.go)
+    }));
+
+    const d=a.draft||{date:'',from:'',to:''};
+    vals.d=d;
+    vals.hasWindows=(a.windows||[]).length>0;
+    vals.formOpen = !vals.hasWindows || !!a.formOpen;
+    vals.showAddAnother = vals.hasWindows && !a.formOpen;
+    vals.openForm = ()=>set({formOpen:true});
+    vals.onDate=e=>set({draft:Object.assign({},d,{date:e.target.value})});
+    vals.onFrom=e=>set({draft:Object.assign({},d,{from:e.target.value})});
+    vals.onTo=e=>set({draft:Object.assign({},d,{to:e.target.value})});
+    vals.windowCards=(a.windows||[]).slice().sort((x,y)=>x.date<y.date?-1:1).map(w=>({
+      day: wk(w.date)+', '+dmShort(w.date),
+      range: fmtT(mins(w.from))+' – '+fmtT(mins(w.to)),
+      remove: ()=>set(st=>({windows:(st.windows||[]).filter(z=>z!==w)}))
+    }));
+    vals.availPrimaryLabel = vals.formOpen ? 'Add availability' : 'Continue';
+    vals.availPrimary = vals.formOpen
+      ? ()=>{ if(!d.date||mins(d.to)<=mins(d.from)) return; const nd=new Date(dObj(d.date).getTime()+86400000).toISOString().slice(0,10);
+              set(st=>({windows:(st.windows||[]).concat([{date:d.date,from:d.from,to:d.to}]), formOpen:false, draft:{date:nd,from:d.from,to:d.to}})); }
+      : ()=>this.go('duration');
+
+    vals.durations=[15,20,30,45,60].map(m=>({
+      label:m+' min', style: (dur===m?TILE_ON:TILE_OFF),
+      pick: ()=>set({duration:m, customDur:''})
+    }));
+
+    vals.dayGroups=this.groups(this.capped()).map(g=>({
+      long: wk(g.date)+', '+dm(g.date),
+      slots: g.slots.map(sl=>{
+        const off=(a.off||[]).includes(sl.key);
+        return { label: fmtTShort(sl.start)+' – '+fmtT(sl.end), style: off?SLOT_OFF:SLOT_ON,
+                 toggle: ()=>set(st=>({off: (st.off||[]).includes(sl.key)? st.off.filter(k=>k!==sl.key) : (st.off||[]).concat([sl.key])})) };
+      })
+    }));
+
+    vals.askedFields=[{label:'Name',removable:false},{label:'Email',removable:false}].concat(
+      extra.map(f=>({label:f, removable:true, remove: ()=>set(st=>({fields:(st.fields||[]).filter(x=>x!==f)}))})));
+    vals.fieldChips=CHIPS.map(c=>({
+      label: extra.includes(c)? c : '+ '+c,
+      style: extra.includes(c)?CHIP_ON:CHIP_OFF,
+      add: ()=>set(st=>({fields: (st.fields||[]).includes(c)? st.fields : (st.fields||[]).concat([c])}))
+    }));
+    vals.fieldSummary=['Name','Email'].concat(extra).join(' + ');
+
+    const first=act[0];
+    vals.sampleDay = first? wk(first.date)+', '+dm(first.date) : '';
+    vals.sampleTime = first? fmtT(first.start)+' – '+fmtT(first.end) : '';
+
+    const pubGroups=this.groups(act);
+    vals.pubDays=pubGroups.map(g=>{
+      const free=g.slots.filter(x=>!(a.booked||[]).includes(x.key)).length;
+      return { weekday: wk(g.date), dayMonth: dm(g.date),
+               freeLabel: free+' times open',
+               style: a.pDay===g.date?DAY_ON:DAY_OFF,
+               pick: ()=>set({pDay:g.date, pSlot:null, screen:'pTime'}) };
+    });
+    const curDate=a.pDay || (pubGroups[0]&&pubGroups[0].date) || '';
+    vals.pickedDayLong = curDate? wk(curDate)+', '+dm(curDate) : '';
+    vals.pubTimes=(pubGroups.find(g=>g.date===curDate)||{slots:[]}).slots.map(sl=>{
+      const taken=(a.booked||[]).includes(sl.key);
+      return { label: fmtT(sl.start), taken,
+               style: taken?TIME_TAKEN:(a.pSlot===sl.key?TIME_SEL:TIME_FREE),
+               pick: ()=>{ if(!taken) set({pSlot:sl.key}); } };
+    });
+    const byKey=k=>this.gen().find(x=>x.key===k)||null;
+    const orig=byKey(a.origSlot), prev=byKey(a.prevSlot);
+    const resch = a.mode==='reschedule';
+    vals.manageDayLong = orig? wk(orig.date)+', '+dm(orig.date) : '';
+    vals.manageRange = orig? fmtT(orig.start)+' – '+fmtT(orig.end) : '';
+    vals.prevDayLong = prev? wk(prev.date)+', '+dm(prev.date) : '';
+    vals.prevRange = prev? fmtT(prev.start)+' – '+fmtT(prev.end) : '';
+    vals.manageUrl = vals.url+'/m/7q4k';
+    vals.toManage = ()=>this.go('pManage');
+    vals.startReschedule = ()=>set({mode:'reschedule', pSlot:null, screen:(this.groups(this.active()).length>1?'pDay':'pTime')});
+    vals.cancelBooking = ()=>set(st=>({screen:'pCancelled', mode:'book', prevSlot:st.origSlot, origSlot:null, pSlot:null, booked:(st.booked||[]).filter(k=>k!==st.origSlot)}));
+    vals.timePrimaryLabel = resch? 'Move to this time' : 'Continue';
+    vals.timePrimary = resch
+      ? ()=>set(st=>({screen:'pMoved', mode:'book', prevSlot:st.origSlot, origSlot:st.pSlot, booked:(st.booked||[]).filter(k=>k!==st.origSlot).concat([st.pSlot])}))
+      : ()=>this.go('pDetails');
+    vals.hasPick=!!picked; vals.noPick=!picked;
+    vals.pickedRange = picked? fmtT(picked.start)+' – '+fmtT(picked.end) : '';
+    vals.pStart = ()=> this.go(pubGroups.length>1?'pDay':'pTime');
+    vals.toPDay = ()=>this.go('pDay');
+    vals.toPTime = ()=>this.go('pTime');
+    vals.toPDetails = ()=>this.go('pDetails');
+    vals.toPReview = ()=>this.go('pReview');
+    vals.confirm = ()=>set(st=>({screen:'pDone', origSlot:st.pSlot, booked:(st.booked||[]).concat([st.pSlot])}));
+    vals.inputs=[{label:'Name',key:'name',placeholder:'Your full name'},{label:'Email',key:'email',placeholder:'you@student.edu'}]
+      .concat(extra.map(f=>({label:f, key:f, placeholder:''})))
+      .map(i=>({label:i.label, value:det[i.key]||'', placeholder:i.placeholder, onChange: upDet(i.key)}));
+    vals.reviewRows=[{label:'Name',value:det.name||'—'},{label:'Email',value:det.email||'—'}]
+      .concat(extra.map(f=>({label:f, value:det[f]||'—'})));
+
+    return vals;
+  }
+}
+</script>
+</body>
+</html>
