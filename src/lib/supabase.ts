@@ -53,6 +53,10 @@ export async function getPublicEvent(slug: string): Promise<PublicEvent | null> 
   return data as PublicEvent | null;
 }
 
+function siteUrl(): string {
+  return typeof window !== 'undefined' ? window.location.origin : '';
+}
+
 export async function bookSlot(input: {
   slug: string;
   date: string;
@@ -68,6 +72,7 @@ export async function bookSlot(input: {
     p_name: input.name,
     p_email: input.email,
     p_extra_fields: input.extraFields,
+    p_site_url: siteUrl(),
   });
   return unwrap(data, error);
 }
@@ -83,12 +88,13 @@ export async function rescheduleBooking(manageToken: string, date: string, start
     p_manage_token: manageToken,
     p_date: date,
     p_start_minute: start,
+    p_site_url: siteUrl(),
   });
   return unwrap(data, error);
 }
 
 export async function cancelBooking(manageToken: string): Promise<BookingRecord> {
-  const { data, error } = await supabase.rpc('cancel_booking', { p_manage_token: manageToken });
+  const { data, error } = await supabase.rpc('cancel_booking', { p_manage_token: manageToken, p_site_url: siteUrl() });
   return unwrap(data, error);
 }
 

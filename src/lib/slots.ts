@@ -84,14 +84,14 @@ export function activeSlots(capped: Slot[], disabledKeys: string[]): Slot[] {
   return capped.filter((s) => !(disabledKeys || []).includes(s.key));
 }
 
-export interface SlotDayGroup {
+export interface SlotDayGroup<T> {
   date: string;
-  slots: Slot[];
+  slots: T[];
 }
 
-/** Groups an already-sorted slot list by date, preserving first-seen order. */
-export function groupByDay(list: Slot[]): SlotDayGroup[] {
-  const out: SlotDayGroup[] = [];
+/** Groups an already-sorted slot list by date, preserving first-seen order. Works for any dated slot shape. */
+export function groupByDay<T extends { date: string }>(list: T[]): SlotDayGroup<T>[] {
+  const out: SlotDayGroup<T>[] = [];
   const idx: Record<string, number> = {};
   list.forEach((s) => {
     if (idx[s.date] === undefined) {
