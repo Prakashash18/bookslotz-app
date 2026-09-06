@@ -108,26 +108,76 @@ button { font: inherit; }
 
 /* ---------- Slot toggle (organiser slots screen) ---------- */
 .bs-slot {
-  padding: 11px 8px; border-radius: 9px; font-size: 13.5px; font-weight: 500;
-  cursor: pointer; transition: .14s ease; text-align: center;
+  height: 58px; box-sizing: border-box; padding: 10px 12px; border-radius: 10px;
+  display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+  cursor: pointer; transition: .14s ease; text-align: left;
   border: 1px solid #e8e3db; background: #fff; color: var(--bs-ink);
 }
-.bs-slot.is-off {
-  border: 1px dashed var(--bs-line-dash); background: none; color: var(--bs-label); text-decoration: line-through;
+.bs-slot:hover { border-color: var(--bs-accent-border); }
+.bs-slot-time { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+.bs-slot-sub {
+  margin-top: 3px; font-size: 10px; font-weight: 600; letter-spacing: 0.07em;
+  text-transform: uppercase; color: #a39b91;
 }
+.bs-slot.is-off { border: 1px dashed var(--bs-line-dash); background: none; }
+.bs-slot.is-off .bs-slot-time { color: #a39b91; text-decoration: line-through; }
+.bs-slot.is-off .bs-slot-sub { color: #b9b1a6; }
+
+/* ---------- Call-sheet rows (who's booked / roster) ---------- */
+.bs-sheet-row {
+  display: flex; align-items: center; gap: 16px; padding: 12px 4px;
+  border-bottom: 1px solid var(--bs-line-softer);
+}
+.bs-sheet-row-time {
+  flex: none; width: 78px; font-size: 13.5px; font-weight: 600;
+  font-variant-numeric: tabular-nums; color: var(--bs-accent-text-strong);
+}
+.bs-sheet-row.is-cancelled { opacity: 0.55; }
+.bs-sheet-row.is-cancelled .bs-sheet-row-time { color: #a39b91; text-decoration: line-through; }
+.bs-tag {
+  flex: none; padding: 4px 10px; border-radius: 99px; background: var(--bs-paper);
+  border: 1px solid var(--bs-line-input); font-size: 11.5px; font-weight: 500; color: var(--bs-label);
+}
+.bs-rule { display: flex; align-items: center; gap: 12px; }
+.bs-rule-line { flex: 1; height: 1px; background: var(--bs-well-border); }
 
 /* ---------- Time picker (public) ---------- */
+/* 62px tall: students book these on a phone, so the tap target leads. */
 .bs-time {
-  padding: 15px 8px; border-radius: 10px; font-size: 15.5px; font-weight: 600; transition: .16s ease; text-align: center;
+  height: 62px; box-sizing: border-box; padding: 8px; border-radius: 12px; transition: .16s ease;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
   border: 1px solid #e8e3db; background: #fff; color: var(--bs-ink); cursor: pointer;
 }
+.bs-time-label { font-size: 16px; font-weight: 600; }
+.bs-time-sub {
+  margin-top: 2px; font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; color: #c4bcb1;
+}
+.bs-time:hover:not(:disabled) { border-color: var(--bs-accent-border); }
 .bs-time.is-sel {
-  border: 1.5px solid var(--bs-accent); background: var(--bs-accent-wash); color: var(--bs-accent-text);
+  border: 1.5px solid var(--bs-accent); background: var(--bs-accent-wash);
   box-shadow: 0 0 0 3px var(--bs-accent-ring);
 }
-.bs-time.is-taken {
-  border: 1px dashed #e8e3db; background: none; color: #a39b91; cursor: not-allowed;
+.bs-time.is-sel .bs-time-label { font-weight: 700; color: var(--bs-accent-text); }
+.bs-time.is-taken { border: 1px dashed #e8e3db; background: none; cursor: not-allowed; }
+.bs-time.is-taken .bs-time-label { color: #b9b1a6; text-decoration: line-through; }
+
+/* ---------- Confirmation stub ---------- */
+.bs-stub {
+  position: relative; background: #fff; border: 1px solid var(--bs-line-soft); border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(26,24,21,.05), 0 20px 40px -28px rgba(26,24,21,.4);
 }
+/* The tear: a perforated rule with a punched notch at each edge. */
+.bs-stub-tear {
+  position: relative; height: 1px;
+  background-image: repeating-linear-gradient(90deg, var(--bs-line-dash) 0 6px, rgba(0,0,0,0) 6px 12px);
+}
+.bs-stub-tear::before, .bs-stub-tear::after {
+  content: ''; position: absolute; top: -10px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--bs-sheet);
+}
+.bs-stub-tear::before { left: -11px; border-right: 1px solid var(--bs-line-soft); }
+.bs-stub-tear::after { right: -11px; border-left: 1px solid var(--bs-line-soft); }
 
 /* ---------- Day card (public) ---------- */
 .bs-day {
@@ -147,12 +197,14 @@ button { font: inherit; }
 .bs-rail-row {
   display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 7px 0;
   border: 0; background: none; cursor: pointer; position: relative;
+  /* Above the spine drawn behind the rail, so the dots read as beads on it. */
+  z-index: 1;
 }
 .bs-rail-dot {
   flex: none; width: 23px; height: 23px; border-radius: 50%; display: grid; place-items: center;
   font-size: 11px; font-weight: 700; box-sizing: border-box;
 }
-.bs-rail-dot.is-now { background: var(--bs-accent); color: #fff; }
+.bs-rail-dot.is-now { background: var(--bs-accent); color: #fff; box-shadow: 0 0 0 4px oklch(0.94 0.04 75 / 0.65); }
 .bs-rail-dot.is-done { background: var(--bs-accent-wash-strong); color: var(--bs-accent-text-strong); border: 1px solid var(--bs-accent-border); }
 .bs-rail-dot.is-todo { background: var(--bs-paper); color: var(--bs-label-strong); border: 1px solid var(--bs-line-dash); }
 .bs-rail-label { font-size: 13.5px; line-height: 1.3; }
@@ -190,6 +242,12 @@ button { font: inherit; }
 }
 .bs-rail-steps { position: relative; margin-top: 30px; display: flex; flex-direction: column; gap: 2px; }
 .bs-rail-steps::before { content: ''; position: absolute; left: 11px; top: 14px; bottom: 14px; width: 1px; background: var(--bs-line-dash); }
+/* Ochre spine filled up to the current step — height set inline from the step index. */
+.bs-rail-steps::after {
+  content: ''; position: absolute; left: 10px; top: 14px; width: 2px; border-radius: 1px;
+  background: var(--bs-accent); height: var(--bs-rail-progress, 0px);
+  transition: height .35s cubic-bezier(.4,0,.2,1);
+}
 
 .bs-sheet {
   flex: 1; min-width: 0; display: flex; flex-direction: column;
@@ -205,21 +263,82 @@ button { font: inherit; }
 .bs-progress-track { margin-top: 12px; height: 2px; background: #ece6dc; border-radius: 2px; }
 .bs-progress-fill { height: 100%; background: var(--bs-accent); border-radius: 2px; transition: width .45s cubic-bezier(.4,0,.2,1); }
 
-.bs-sheet-back { display: none; flex: none; justify-content: flex-end; padding: 16px 20px 0; }
-@container (min-width: 760px) {
-  .bs-sheet-back.bs-sheet-back--active { display: flex; }
+/* Sheet header band — gives the sheet a top edge instead of floating content. */
+.bs-sheet-header {
+  display: none; flex: none; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 0 28px; height: 54px; border-bottom: 1px solid var(--bs-line-softer); background: var(--bs-well);
 }
+@container (min-width: 760px) {
+  .bs-sheet-header.bs-sheet-header--active { display: flex; }
+}
+/* Pages whose header is the only chrome they have keep it at every width. */
+.bs-sheet-header.bs-sheet-header--always { display: flex; padding: 0 clamp(18px,3cqw,28px); height: 58px; }
+
+.bs-state-chip {
+  flex: none; padding: 3px 9px; border-radius: 99px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  background: var(--bs-accent-wash-strong); border: 1px solid var(--bs-accent-border); color: var(--bs-accent-text-strong);
+}
+.bs-state-chip.is-live { background: var(--bs-accent); border-color: var(--bs-accent); color: #fff; }
 
 .bs-pub-header {
   flex: none; padding: 16px clamp(20px,4cqw,34px); border-bottom: 1px solid var(--bs-line-softer);
   display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  background: var(--bs-well);
 }
 
 .bs-sheet-body {
-  flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column; justify-content: center;
-  padding: clamp(24px,5cqw,52px) clamp(20px,4.5cqw,52px);
+  flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column;
+  padding: clamp(24px,4cqw,40px) clamp(20px,4cqw,40px);
+  background-image: repeating-linear-gradient(180deg, rgba(0,0,0,0) 0 27px, rgba(26,24,21,0.018) 27px 28px);
 }
-.bs-sheet-content { width: 100%; max-width: 600px; margin: 0 auto; }
+.bs-sheet-body.is-centered { justify-content: center; padding: clamp(24px,5cqw,52px) clamp(20px,4.5cqw,52px); }
+.bs-sheet-content { width: 100%; flex: 1; display: flex; flex-direction: column; }
+.bs-sheet-body.is-centered > .bs-sheet-content { flex: none; max-width: 600px; margin: 0 auto; }
+
+/* Pinned bar under the scrolling body — holds the selected slot in view. */
+.bs-sheet-footer {
+  flex: none; padding: 14px clamp(20px,4cqw,34px) 16px;
+  border-top: 1px solid var(--bs-well-border); background: var(--bs-well);
+}
+
+/* Two-column working layout: controls on the left, live preview on the right. */
+.bs-cols { flex: 1; display: flex; gap: clamp(24px, 4cqw, 44px); }
+.bs-col-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.bs-panel {
+  flex: none; width: 292px; display: flex; flex-direction: column;
+  border-left: 1px solid var(--bs-well-border); padding-left: 30px;
+}
+/* The side panel is a bonus, never the only route — it folds away when narrow,
+   and whatever it carried that the step actually needs reappears inline. */
+.bs-panel-fallback { display: none; }
+@container (max-width: 899.98px) {
+  .bs-panel { display: none; }
+  .bs-panel-fallback { display: block; }
+}
+
+/* Stat column + list column (dashboard, roster). Unlike .bs-panel this never
+   disappears — it stacks, because the list is the point of the page. */
+.bs-side { flex: none; width: 288px; display: flex; flex-direction: column; }
+.bs-col-list {
+  flex: 1; min-width: 0; display: flex; flex-direction: column;
+  border-left: 1px solid var(--bs-well-border); padding-left: clamp(24px, 3cqw, 36px);
+}
+@container (max-width: 899.98px) {
+  .bs-cols.bs-cols--stack { flex-direction: column; }
+  .bs-cols--stack .bs-side { width: auto; }
+  .bs-cols--stack .bs-col-list {
+    border-left: 0; padding-left: 0;
+    border-top: 1px solid var(--bs-well-border); padding-top: 24px;
+  }
+}
+
+.bs-eyebrow {
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bs-label-strong);
+}
+.bs-spacer { flex: 1; min-height: 12px; }
+.bs-serif { font-family: 'Instrument Serif', Georgia, serif; font-weight: 400; }
+.bs-nums { font-variant-numeric: tabular-nums; }
 
 .bs-h1 {
   margin: 0; font-family: 'Instrument Serif', Georgia, serif; font-weight: 400;

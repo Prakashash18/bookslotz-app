@@ -47,55 +47,40 @@ export default function RosterPage() {
   const groups = groupByDay(roster.rows.map((r) => ({ ...r.slot, row: r })));
 
   return (
-    <PublicShell title={roster.title} durationMinutes={roster.durationMinutes}>
-      <div className="bs-animate-up">
+    <PublicShell title={roster.title} durationMinutes={roster.durationMinutes} centered={false}>
+      <div className="bs-animate-up" style={{ width: '100%', maxWidth: 760 }}>
         <h1 className="bs-h1 bs-h1-sm">Who's booked</h1>
+        <p style={{ margin: '10px 0 0', fontSize: '14.5px', color: 'var(--bs-ink-soft)' }}>
+          {roster.rows.length} {roster.rows.length === 1 ? 'slot is' : 'slots are'} taken so far.
+        </p>
+
         {roster.rows.length === 0 ? (
           <p style={{ margin: '16px 0 0', fontSize: 15, color: 'var(--bs-ink-soft)' }}>No one yet.</p>
         ) : (
-          <div style={{ marginTop: 'clamp(22px,5cqw,30px)', display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div style={{ marginTop: 'clamp(20px,4cqw,28px)', display: 'flex', flexDirection: 'column', gap: 22 }}>
             {groups.map((g) => (
               <div key={g.date}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                  <span
-                    style={{
-                      flex: 'none',
-                      fontSize: 12,
-                      fontWeight: 600,
-                      letterSpacing: '0.08em',
-                      textTransform: 'uppercase',
-                      color: 'var(--bs-label-strong)',
-                    }}
-                  >
+                <div className="bs-rule">
+                  <span className="bs-serif" style={{ flex: 'none', fontSize: 19 }}>
                     {wk(g.date)}, {dm(g.date)}
                   </span>
-                  <span style={{ flex: 1, height: 1, background: 'var(--bs-well-border)' }} />
+                  <span className="bs-rule-line" />
+                  <span style={{ flex: 'none', fontSize: '11.5px', color: '#8b8379' }}>{g.slots.length} booked</span>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <div style={{ marginTop: 8 }}>
                   {g.slots.map((s, i) => {
                     const extra = Object.entries(s.row.extraFields).filter(([, v]) => v);
                     return (
-                      <div
-                        key={i}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'baseline',
-                          gap: 14,
-                          padding: '12px 16px',
-                          background: '#fff',
-                          border: '1px solid var(--bs-line-soft)',
-                          borderRadius: 11,
-                        }}
-                      >
-                        <span style={{ flex: 'none', width: 92, fontSize: '13.5px', fontWeight: 600, color: 'var(--bs-ink)' }}>
-                          {fmtT(s.start)}
+                      <div key={i} className="bs-sheet-row">
+                        <span className="bs-sheet-row-time">{fmtT(s.start)}</span>
+                        <span style={{ flex: 1, minWidth: 0, fontSize: '14.5px', fontWeight: 500 }}>
+                          {s.row.name || '—'}
                         </span>
-                        <span style={{ flex: 1, minWidth: 0, fontSize: '14.5px', fontWeight: 500 }}>{s.row.name || '—'}</span>
-                        {extra.length > 0 && (
-                          <span style={{ flex: 'none', fontSize: 13, color: 'var(--bs-label)' }}>
-                            {extra.map(([, v]) => v).join(', ')}
+                        {extra.map(([k, v]) => (
+                          <span key={k} className="bs-tag" title={k}>
+                            {v}
                           </span>
-                        )}
+                        ))}
                       </div>
                     );
                   })}

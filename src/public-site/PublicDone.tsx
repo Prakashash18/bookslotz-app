@@ -53,7 +53,9 @@ export default function PublicDone() {
         pickedRange={`${fmtT(booking.slot.start)} – ${fmtT(booking.slot.end)}`}
         location={booking.event.location}
         sendEmail={booking.event.sendEmail}
+        bookerName={booking.name}
         bookerEmail={booking.email}
+        extraFields={booking.extraFields}
         onManage={() => navigate(`/b/${slug}/m/${manageToken}`)}
       />
     </PublicShell>

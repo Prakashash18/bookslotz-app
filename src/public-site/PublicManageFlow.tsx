@@ -5,7 +5,7 @@ import { dm, fmtT, groupByDay, wk } from '../lib/slots';
 import { cancelBooking, getBooking, getPublicEvent, rescheduleBooking } from '../lib/supabase';
 import type { BookingRecord, PublicEvent, PublicSlot } from '../lib/types';
 import { DayPicker } from './screens/DayPicker';
-import { TimePicker } from './screens/TimePicker';
+import { HeldSlotBar, TimePicker } from './screens/TimePicker';
 import { Manage } from './screens/Manage';
 import { Moved } from './screens/Moved';
 import { Cancelled } from './screens/Cancelled';
@@ -107,7 +107,16 @@ export default function PublicManageFlow() {
   }
 
   return (
-    <PublicShell title={event.title} durationMinutes={event.durationMinutes}>
+    <PublicShell
+      title={event.title}
+      durationMinutes={event.durationMinutes}
+      centered={screen !== 'pTime'}
+      footer={
+        screen === 'pTime' && picked ? (
+          <HeldSlotBar picked={picked} primaryLabel={busy ? 'Moving…' : 'Move to this time'} onPrimary={doReschedule} />
+        ) : undefined
+      }
+    >
       {screen === 'pManage' && booking.slot && (
         <>
           <Manage
@@ -143,10 +152,8 @@ export default function PublicManageFlow() {
           date={curDate}
           slots={daySlots}
           picked={picked}
-          primaryLabel={busy ? 'Moving…' : 'Move to this time'}
           showChangeDay={groups.length > 1}
           onPick={(s) => setPSlot(s)}
-          onPrimary={doReschedule}
           onChangeDay={() => setScreen('pDay')}
         />
       )}

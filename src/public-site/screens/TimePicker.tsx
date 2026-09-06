@@ -5,38 +5,45 @@ export function TimePicker({
   date,
   slots,
   picked,
-  primaryLabel,
   showChangeDay,
   onPick,
-  onPrimary,
   onChangeDay,
 }: {
   date: string;
   slots: PublicSlot[];
   picked: PublicSlot | null;
-  primaryLabel: string;
   showChangeDay: boolean;
   onPick: (s: PublicSlot) => void;
-  onPrimary: () => void;
   onChangeDay: () => void;
 }) {
+  const open = slots.filter((s) => !s.taken).length;
+
   return (
     <div className="bs-animate-up">
-      <h1 className="bs-h1 bs-h1-pub">
-        {wk(date)}, {dm(date)}
-      </h1>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12 }}>
+        <h1 className="bs-h1 bs-h1-pub">
+          {wk(date)}, {dm(date)}
+        </h1>
+        {showChangeDay && (
+          <button type="button" className="bs-btn-text-tight" style={{ flex: 'none' }} onClick={onChangeDay}>
+            Change day
+          </button>
+        )}
+      </div>
+      <div style={{ marginTop: 6, fontSize: 13, color: '#8b8379' }}>
+        {open === 0 ? 'Nothing left on this day.' : `Tap a time to hold it — ${open} open.`}
+      </div>
+
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill,minmax(108px,1fr))',
-          gap: 9,
-          marginTop: 'clamp(24px,5cqw,32px)',
-          maxHeight: 300,
-          overflow: 'auto',
+          gridTemplateColumns: 'repeat(auto-fill,minmax(132px,1fr))',
+          gap: 10,
+          marginTop: 'clamp(18px,3cqw,24px)',
         }}
       >
         {slots.map((s) => {
-          const isPicked = picked && picked.start === s.start;
+          const isPicked = !!picked && picked.start === s.start;
           const cls = s.taken ? 'is-taken' : isPicked ? 'is-sel' : '';
           return (
             <button
@@ -46,37 +53,39 @@ export function TimePicker({
               disabled={s.taken}
               onClick={() => onPick(s)}
             >
-              {fmtT(s.start)}
+              <span className="bs-time-label">{fmtT(s.start)}</span>
+              {s.taken && <span className="bs-time-sub">Taken</span>}
             </button>
           );
         })}
       </div>
+    </div>
+  );
+}
 
-      {picked ? (
-        <div className="bs-animate-fade" style={{ marginTop: 24, paddingTop: 20, borderTop: '1px solid var(--bs-line-soft)' }}>
-          <div style={{ fontSize: 'clamp(18px,3.6cqw,22px)', fontWeight: 600, letterSpacing: '-0.01em' }}>
-            {fmtT(picked.start)} – {fmtT(picked.end)}
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 18, marginTop: 18 }}>
-            <button type="button" className="bs-btn-primary" onClick={onPrimary}>
-              {primaryLabel}
-            </button>
-            {showChangeDay && (
-              <button type="button" className="bs-btn-text" onClick={onChangeDay}>
-                Change day
-              </button>
-            )}
-          </div>
+/** The held slot, pinned below the scrolling list so it never leaves the screen. */
+export function HeldSlotBar({
+  picked,
+  primaryLabel,
+  onPrimary,
+}: {
+  picked: PublicSlot;
+  primaryLabel: string;
+  onPrimary: () => void;
+}) {
+  return (
+    <div className="bs-animate-fade" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+      <div style={{ minWidth: 0 }}>
+        <div className="bs-eyebrow" style={{ color: 'var(--bs-label)' }}>
+          Holding
         </div>
-      ) : (
-        showChangeDay && (
-          <div style={{ marginTop: 24 }}>
-            <button type="button" className="bs-btn-text" onClick={onChangeDay}>
-              Change day
-            </button>
-          </div>
-        )
-      )}
+        <div className="bs-serif" style={{ marginTop: 3, fontSize: 22, lineHeight: 1.1 }}>
+          {fmtT(picked.start)} – {fmtT(picked.end)}
+        </div>
+      </div>
+      <button type="button" className="bs-btn-primary" style={{ flex: 'none' }} onClick={onPrimary}>
+        {primaryLabel}
+      </button>
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { bookSlot, getPublicEvent } from '../lib/supabase';
 import type { PublicEvent, PublicSlot } from '../lib/types';
 import { EventIntro } from './screens/EventIntro';
 import { DayPicker } from './screens/DayPicker';
-import { TimePicker } from './screens/TimePicker';
+import { HeldSlotBar, TimePicker } from './screens/TimePicker';
 import { Details } from './screens/Details';
 import { ReviewBooking } from './screens/ReviewBooking';
 
@@ -94,11 +94,22 @@ export default function PublicBookingFlow() {
   }
 
   return (
-    <PublicShell title={event.title} durationMinutes={event.durationMinutes}>
+    <PublicShell
+      title={event.title}
+      durationMinutes={event.durationMinutes}
+      centered={screen !== 'pEvent' && screen !== 'pTime'}
+      footer={
+        screen === 'pTime' && picked ? (
+          <HeldSlotBar picked={picked} primaryLabel="Continue" onPrimary={() => setScreen('pDetails')} />
+        ) : undefined
+      }
+    >
       {screen === 'pEvent' && (
         <EventIntro
           event={event}
+          groups={groups}
           freeTotal={freeTotal}
+          onRoster={() => navigate(`/b/${slug}/roster`)}
           onStart={() => {
             if (groups.length > 1) setScreen('pDay');
             else {
@@ -126,10 +137,8 @@ export default function PublicBookingFlow() {
           date={curDate}
           slots={daySlots}
           picked={picked}
-          primaryLabel="Continue"
-          showChangeDay={true}
+          showChangeDay={groups.length > 1}
           onPick={(s) => setPSlot(s)}
-          onPrimary={() => setScreen('pDetails')}
           onChangeDay={() => setScreen('pDay')}
         />
       )}

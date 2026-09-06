@@ -71,6 +71,9 @@ export default function OrganiserWizard() {
   const capped = cappedSlots(all, s.maxBookings ? parseInt(s.maxBookings, 10) : null);
   const active = activeSlots(capped, s.off);
   const railMeta = active.length ? `${active.length} slots · ${s.duration} min each` : `${s.duration} min each`;
+  const activeDates = Array.from(new Set(active.map((sl) => sl.date))).sort();
+  // Steps that carry a live preview or a long list get the top-anchored, two-column sheet.
+  const wide = s.screen === 'what' || s.screen === 'avail' || s.screen === 'slots' || s.screen === 'review';
 
   async function publish() {
     setPublishing(true);
@@ -97,11 +100,19 @@ export default function OrganiserWizard() {
   }
 
   return (
-    <WizardShell screen={s.screen} onBack={back} onJump={go} eventTitle={s.title || 'Untitled event'} railMeta={railMeta}>
+    <WizardShell
+      screen={s.screen}
+      onBack={back}
+      onJump={go}
+      eventTitle={s.title || 'Untitled event'}
+      railMeta={railMeta}
+      centered={!wide}
+    >
       {s.screen === 'what' && (
         <What
           title={s.title}
           desc={s.desc}
+          duration={s.duration}
           onTitle={(v) => set({ title: v })}
           onDesc={(v) => set({ desc: v })}
           onContinue={() => go('avail')}
@@ -112,6 +123,7 @@ export default function OrganiserWizard() {
         <Availability
           windows={s.windows}
           draft={s.draft}
+          duration={s.duration}
           formOpen={s.formOpen}
           onDraftChange={(patch) => set({ draft: { ...s.draft, ...patch } })}
           onOpenForm={() => set({ formOpen: true })}
@@ -148,6 +160,7 @@ export default function OrganiserWizard() {
           capped={capped}
           off={s.off}
           available={active.length}
+          duration={s.duration}
           onToggle={(key) =>
             set((st) => ({ off: st.off.includes(key) ? st.off.filter((k) => k !== key) : st.off.concat([key]) }))
           }
@@ -184,6 +197,7 @@ export default function OrganiserWizard() {
           title={s.title}
           duration={s.duration}
           available={active.length}
+          dates={activeDates}
           fields={s.fields}
           publishing={publishing}
           error={publishError}

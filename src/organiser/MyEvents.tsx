@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BareShell } from '../components/WizardShell';
+import { BareShell, Mark } from '../components/WizardShell';
 import { signOut } from '../lib/auth';
 import { listMyEvents } from '../lib/supabase';
 import type { MyEventSummary } from '../lib/types';
@@ -26,14 +26,22 @@ export default function MyEvents() {
   }
 
   return (
-    <BareShell>
-      <div className="bs-animate-up">
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-          <h1 className="bs-h1 bs-h1-sm">Your events</h1>
+    <BareShell
+      centered={false}
+      header={
+        <>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+            <Mark size={10} />
+            <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: '-0.01em' }}>BookSlot</span>
+          </div>
           <button type="button" className="bs-btn-text-tight" onClick={handleSignOut}>
             Sign out
           </button>
-        </div>
+        </>
+      }
+    >
+      <div className="bs-animate-up">
+        <h1 className="bs-h1 bs-h1-sm">Your events</h1>
 
         {error && <p style={{ margin: '16px 0 0', fontSize: '13.5px', color: '#b00020' }}>{error}</p>}
 
@@ -64,9 +72,33 @@ export default function MyEvents() {
                   font: 'inherit',
                 }}
               >
-                <div style={{ fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em' }}>{e.title}</div>
-                <div style={{ marginTop: 6, fontSize: 14, color: 'var(--bs-label)' }}>
-                  {e.bookedCount} of {e.totalSlots} booked · {e.durationMinutes} min each
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
+                  <div className="bs-serif" style={{ flex: 1, minWidth: 0, fontSize: 22, lineHeight: 1.1 }}>
+                    {e.title}
+                  </div>
+                  <div className="bs-nums" style={{ flex: 'none', fontSize: '13.5px', fontWeight: 600, color: 'var(--bs-accent-text-strong)' }}>
+                    {e.bookedCount}/{e.totalSlots}
+                  </div>
+                </div>
+                <div
+                  style={{
+                    marginTop: 10,
+                    height: 6,
+                    borderRadius: 3,
+                    background: '#f2ede5',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <div
+                    style={{
+                      height: '100%',
+                      width: `${e.totalSlots > 0 ? Math.round((e.bookedCount / e.totalSlots) * 100) : 0}%`,
+                      background: 'var(--bs-accent)',
+                    }}
+                  />
+                </div>
+                <div style={{ marginTop: 8, fontSize: '13.5px', color: 'var(--bs-label)' }}>
+                  {e.totalSlots - e.bookedCount} still open · {e.durationMinutes} min each
                 </div>
               </button>
             ))}
