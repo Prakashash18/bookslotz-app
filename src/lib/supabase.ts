@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import type { AvailabilityWindow } from './slots';
-import type { BookingRecord, MyEventSummary, OrganiserEvent, PublicEvent } from './types';
+import type { BookingRecord, MyEventSummary, OrganiserEvent, PublicEvent, PublicRoster } from './types';
 
 const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
@@ -53,6 +53,12 @@ export async function getPublicEvent(slug: string): Promise<PublicEvent | null> 
   const { data, error } = await supabase.rpc('get_public_event', { p_slug: slug });
   if (error) throw new BookSlotApiError(error.message);
   return data as PublicEvent | null;
+}
+
+export async function getPublicRoster(slug: string): Promise<PublicRoster | null> {
+  const { data, error } = await supabase.rpc('get_public_roster', { p_slug: slug });
+  if (error) throw new BookSlotApiError(error.message);
+  return data as PublicRoster | null;
 }
 
 function siteUrl(): string {

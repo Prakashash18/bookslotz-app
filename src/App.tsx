@@ -11,6 +11,7 @@ import MyEvents from './organiser/MyEvents';
 import PublicBookingFlow from './public-site/PublicBookingFlow';
 import PublicDone from './public-site/PublicDone';
 import PublicManageFlow from './public-site/PublicManageFlow';
+import RosterPage from './public-site/RosterPage';
 
 /**
  * Supabase's password-recovery email redirects to whatever "Site URL" is
@@ -60,6 +61,7 @@ export default function App() {
         />
         <Route path="/e/:eventId" element={<OrganiserEventPage />} />
         <Route path="/b/:slug" element={<PublicBookingFlow />} />
+        <Route path="/b/:slug/roster" element={<RosterPage />} />
         <Route path="/b/:slug/booked/:manageToken" element={<PublicDone />} />
         <Route path="/b/:slug/m/:manageToken" element={<PublicManageFlow />} />
       </Routes>

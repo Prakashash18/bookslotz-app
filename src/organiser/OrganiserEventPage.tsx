@@ -20,6 +20,7 @@ export default function OrganiserEventPage() {
   const [event, setEvent] = useState<OrganiserEvent | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [copiedRoster, setCopiedRoster] = useState(false);
   const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
   const [cancelError, setCancelError] = useState<string | null>(null);
@@ -106,11 +107,18 @@ export default function OrganiserEventPage() {
   }
 
   const url = `${window.location.origin}/b/${event.slug}`;
+  const rosterUrl = `${url}/roster`;
 
   const copy = () => {
     navigator.clipboard?.writeText(url).catch(() => {});
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const copyRoster = () => {
+    navigator.clipboard?.writeText(rosterUrl).catch(() => {});
+    setCopiedRoster(true);
+    setTimeout(() => setCopiedRoster(false), 2000);
   };
 
   if (screen === 'published') {
@@ -190,8 +198,13 @@ export default function OrganiserEventPage() {
         </div>
 
         <div style={{ marginTop: 'clamp(20px,4cqw,26px)' }}>
-          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--bs-label-strong)' }}>
-            Who's booked
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--bs-label-strong)' }}>
+              Who's booked
+            </div>
+            <button type="button" className="bs-btn-text-tight" onClick={copyRoster}>
+              {copiedRoster ? 'Copied' : 'Copy link to share with class'}
+            </button>
           </div>
           {event.bookings.length === 0 ? (
             <p style={{ margin: '10px 0 0', fontSize: '14.5px', color: 'var(--bs-ink-soft)' }}>No one yet.</p>

@@ -58,6 +58,18 @@ export interface OrganiserBookingItem {
   slot: BookingSlotInfo | null;
 }
 
+export interface RosterRow {
+  name: string;
+  extraFields: Record<string, string>;
+  slot: BookingSlotInfo;
+}
+
+export interface PublicRoster {
+  title: string;
+  durationMinutes: number;
+  rows: RosterRow[];
+}
+
 export interface OrganiserEvent {
   id: string;
   slug: string;
