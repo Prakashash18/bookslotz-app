@@ -25,7 +25,7 @@ begin
     url := 'https://api.resend.com/emails',
     headers := jsonb_build_object('Authorization', 'Bearer ' || v_key, 'Content-Type', 'application/json'),
     body := jsonb_build_object(
-      'from', 'BookSlot <onboarding@resend.dev>',
+      'from', 'BookSlot <bookings@coastalpatrol.app>',
       'to', jsonb_build_array(p_to),
       'subject', p_subject,
       'html', p_html

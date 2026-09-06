@@ -80,10 +80,10 @@ Resend API key stored in Supabase Vault under the name `resend_api_key`:
 select vault.create_secret('re_xxx', 'resend_api_key', 'Resend API key for BookSlot');
 ```
 
-The sender defaults to Resend's sandbox address (`onboarding@resend.dev`),
-which only delivers to your own Resend account email. Verify a domain in
-Resend and change the `from` address in `send_booking_email()` to send to
-real bookers.
+Sends from `bookings@coastalpatrol.app` (a domain verified in Resend), so
+delivery to real bookers works — not just your own Resend account email.
+If you fork this for a different domain, verify it in Resend and update
+the `from` address in `send_booking_email()`.
 
 ## Known gaps (carried over from the design, or deliberately deferred)
 
