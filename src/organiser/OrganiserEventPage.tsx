@@ -4,6 +4,7 @@ import { BareShell } from '../components/WizardShell';
 import { useSession } from '../lib/auth';
 import { getEventForOrganiser, getOrganiserDashboard } from '../lib/supabase';
 import type { OrganiserEvent } from '../lib/types';
+import { dm, fmtT, wk } from '../lib/slots';
 
 type ViewScreen = 'published' | 'dash';
 
@@ -165,6 +166,61 @@ export default function OrganiserEventPage() {
             </button>
           </div>
         </div>
+
+        <div style={{ marginTop: 'clamp(20px,4cqw,26px)' }}>
+          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--bs-label-strong)' }}>
+            Who's booked
+          </div>
+          {event.bookings.length === 0 ? (
+            <p style={{ margin: '10px 0 0', fontSize: '14.5px', color: 'var(--bs-ink-soft)' }}>No one yet.</p>
+          ) : (
+            <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {event.bookings.map((b, i) => {
+                const cancelled = b.status === 'cancelled';
+                const extra = Object.entries(b.extraFields).filter(([, v]) => v);
+                return (
+                  <div
+                    key={i}
+                    style={{
+                      padding: '14px 16px',
+                      background: '#fff',
+                      border: '1px solid var(--bs-line-soft)',
+                      borderRadius: 12,
+                      opacity: cancelled ? 0.6 : 1,
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12 }}>
+                      <span style={{ fontSize: '14.5px', fontWeight: 600, textDecoration: cancelled ? 'line-through' : 'none' }}>
+                        {b.name || '—'}
+                      </span>
+                      {cancelled && (
+                        <span style={{ flex: 'none', fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--bs-label)' }}>
+                          Cancelled
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ marginTop: 2, fontSize: '13.5px', color: 'var(--bs-label)' }}>{b.email}</div>
+                    {b.slot && (
+                      <div style={{ marginTop: 6, fontSize: '13.5px', color: 'var(--bs-ink-soft)' }}>
+                        {wk(b.slot.date)}, {dm(b.slot.date)} · {fmtT(b.slot.start)} – {fmtT(b.slot.end)}
+                      </div>
+                    )}
+                    {extra.length > 0 && (
+                      <div style={{ marginTop: 6, display: 'flex', flexWrap: 'wrap', gap: '4px 14px' }}>
+                        {extra.map(([k, v]) => (
+                          <span key={k} style={{ fontSize: 13, color: 'var(--bs-ink-soft)' }}>
+                            <span style={{ color: 'var(--bs-label)' }}>{k}:</span> {v}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
         <div style={{ marginTop: 22 }}>
           <button
             type="button"

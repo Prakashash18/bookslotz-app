@@ -49,6 +49,14 @@ export interface MyEventSummary {
   createdAt: string;
 }
 
+export interface OrganiserBookingItem {
+  name: string;
+  email: string;
+  extraFields: Record<string, string>;
+  status: 'booked' | 'cancelled';
+  slot: BookingSlotInfo | null;
+}
+
 export interface OrganiserEvent {
   id: string;
   slug: string;
@@ -64,4 +72,5 @@ export interface OrganiserEvent {
   availableSlots: number;
   bookedCount: number;
   seatBooked: boolean[];
+  bookings: OrganiserBookingItem[];
 }
