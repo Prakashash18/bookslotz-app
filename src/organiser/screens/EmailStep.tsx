@@ -5,16 +5,20 @@ export function EmailStep({
   location,
   sendEmail,
   sampleSlot,
+  organiserEmail,
   onYes,
   onNo,
+  onOrganiserEmail,
   onContinue,
 }: {
   title: string;
   location: string;
   sendEmail: boolean;
   sampleSlot: Slot | null;
+  organiserEmail: string;
   onYes: () => void;
   onNo: () => void;
+  onOrganiserEmail: (v: string) => void;
   onContinue: () => void;
 }) {
   const sampleDay = sampleSlot ? `${wk(sampleSlot.date)}, ${dm(sampleSlot.date)}` : '';
@@ -59,6 +63,21 @@ export function EmailStep({
           Students receive their date, time and room automatically.
         </p>
       )}
+
+      <div style={{ marginTop: 'clamp(24px,5cqw,32px)', padding: 20, border: '1px solid var(--bs-well-border)', borderRadius: 14, background: 'var(--bs-well)' }}>
+        <div style={{ fontSize: '14.5px', fontWeight: 600 }}>Get notified when someone books</div>
+        <div style={{ marginTop: 4, fontSize: '13.5px', color: 'var(--bs-label)', lineHeight: 1.5 }}>
+          Optional — we'll email you too, each time a student takes a slot.
+        </div>
+        <input
+          type="email"
+          value={organiserEmail}
+          onChange={(e) => onOrganiserEmail(e.target.value)}
+          placeholder="you@school.edu"
+          className="bs-input"
+          style={{ marginTop: 12, background: '#fff' }}
+        />
+      </div>
 
       <div style={{ marginTop: 'clamp(26px,5cqw,36px)' }}>
         <button type="button" className="bs-btn-primary" onClick={onContinue}>

@@ -30,6 +30,7 @@ export interface CreateEventInput {
   sendEmail: boolean;
   windows: AvailabilityWindow[];
   disabledSlots: string[];
+  organiserEmail: string;
 }
 
 export async function createEvent(input: CreateEventInput): Promise<{ id: string; slug: string; organiserToken: string }> {
@@ -43,6 +44,7 @@ export async function createEvent(input: CreateEventInput): Promise<{ id: string
     p_send_email: input.sendEmail,
     p_windows: input.windows,
     p_disabled_slots: input.disabledSlots,
+    p_organiser_email: input.organiserEmail || null,
   });
   return unwrap(data, error);
 }

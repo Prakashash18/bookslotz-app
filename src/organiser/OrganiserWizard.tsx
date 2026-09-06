@@ -27,6 +27,7 @@ export interface WizardState {
   off: string[];
   fields: string[];
   sendEmail: boolean;
+  organiserEmail: string;
 }
 
 function nextDay(date: string): string {
@@ -48,6 +49,7 @@ const INITIAL: WizardState = {
   off: [],
   fields: [],
   sendEmail: true,
+  organiserEmail: '',
 };
 
 export default function OrganiserWizard() {
@@ -84,6 +86,7 @@ export default function OrganiserWizard() {
         sendEmail: s.sendEmail,
         windows: s.windows,
         disabledSlots: s.off,
+        organiserEmail: s.organiserEmail,
       });
       navigate(`/e/${created.id}?ot=${created.organiserToken}`, { state: { justPublished: true } });
     } catch (e) {
@@ -176,8 +179,10 @@ export default function OrganiserWizard() {
           location={s.location}
           sendEmail={s.sendEmail}
           sampleSlot={active[0] ?? null}
+          organiserEmail={s.organiserEmail}
           onYes={() => set({ sendEmail: true })}
           onNo={() => set({ sendEmail: false })}
+          onOrganiserEmail={(v) => set({ organiserEmail: v })}
           onContinue={() => go('review')}
         />
       )}
