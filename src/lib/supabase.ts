@@ -117,3 +117,15 @@ export async function getEventForOrganiser(eventId: string): Promise<OrganiserEv
   if (error) throw new BookSlotApiError(error.message);
   return data as OrganiserEvent | null;
 }
+
+export async function organiserCancelBooking(
+  bookingId: string,
+  organiserToken?: string | null,
+): Promise<{ id: string; status: string }> {
+  const { data, error } = await supabase.rpc('organiser_cancel_booking', {
+    p_booking_id: bookingId,
+    p_organiser_token: organiserToken ?? null,
+    p_site_url: siteUrl(),
+  });
+  return unwrap(data, error);
+}

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { BareShell } from '../components/WizardShell';
 import { useSession } from '../lib/auth';
-import { getEventForOrganiser, getOrganiserDashboard } from '../lib/supabase';
+import { getEventForOrganiser, getOrganiserDashboard, organiserCancelBooking } from '../lib/supabase';
 import type { OrganiserEvent } from '../lib/types';
 import { dm, fmtT, wk } from '../lib/slots';
 
@@ -20,22 +20,25 @@ export default function OrganiserEventPage() {
   const [event, setEvent] = useState<OrganiserEvent | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState<string | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
+    let cancelledEffect = false;
 
     // A ?ot= link keeps working with no login required (legacy / shareable path).
     if (organiserToken) {
       getOrganiserDashboard(organiserToken)
         .then((e) => {
-          if (!cancelled) {
+          if (!cancelledEffect) {
             if (e) setEvent(e);
             else setError('not_found');
           }
         })
-        .catch((e) => !cancelled && setError(e instanceof Error ? e.message : String(e)));
+        .catch((e) => !cancelledEffect && setError(e instanceof Error ? e.message : String(e)));
       return () => {
-        cancelled = true;
+        cancelledEffect = true;
       };
     }
 
@@ -48,16 +51,35 @@ export default function OrganiserEventPage() {
 
     getEventForOrganiser(eventId)
       .then((e) => {
-        if (!cancelled) {
+        if (!cancelledEffect) {
           if (e) setEvent(e);
           else setError('not_found');
         }
       })
-      .catch((e) => !cancelled && setError(e instanceof Error ? e.message : String(e)));
+      .catch((e) => !cancelledEffect && setError(e instanceof Error ? e.message : String(e)));
     return () => {
-      cancelled = true;
+      cancelledEffect = true;
     };
   }, [organiserToken, eventId, session, sessionLoading, navigate]);
+
+  async function refetch() {
+    const e = organiserToken ? await getOrganiserDashboard(organiserToken) : await getEventForOrganiser(eventId);
+    if (e) setEvent(e);
+  }
+
+  async function confirmCancel(bookingId: string) {
+    setCancelling(true);
+    setCancelError(null);
+    try {
+      await organiserCancelBooking(bookingId, organiserToken);
+      await refetch();
+      setConfirmCancelId(null);
+    } catch (e) {
+      setCancelError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setCancelling(false);
+    }
+  }
 
   if (error) {
     return (
@@ -175,12 +197,13 @@ export default function OrganiserEventPage() {
             <p style={{ margin: '10px 0 0', fontSize: '14.5px', color: 'var(--bs-ink-soft)' }}>No one yet.</p>
           ) : (
             <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {event.bookings.map((b, i) => {
+              {event.bookings.map((b) => {
                 const cancelled = b.status === 'cancelled';
                 const extra = Object.entries(b.extraFields).filter(([, v]) => v);
+                const confirming = confirmCancelId === b.id;
                 return (
                   <div
-                    key={i}
+                    key={b.id}
                     style={{
                       padding: '14px 16px',
                       background: '#fff',
@@ -212,6 +235,49 @@ export default function OrganiserEventPage() {
                             <span style={{ color: 'var(--bs-label)' }}>{k}:</span> {v}
                           </span>
                         ))}
+                      </div>
+                    )}
+
+                    {!cancelled && (
+                      <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--bs-line-softer)' }}>
+                        {confirming ? (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: 13, color: '#b00020' }}>
+                              Cancel this booking and email {b.name || 'them'}?
+                            </span>
+                            <button
+                              type="button"
+                              className="bs-btn-text-tight"
+                              style={{ color: '#b00020', fontWeight: 600 }}
+                              disabled={cancelling}
+                              onClick={() => confirmCancel(b.id)}
+                            >
+                              {cancelling ? 'Cancelling…' : 'Yes, cancel it'}
+                            </button>
+                            <button
+                              type="button"
+                              className="bs-btn-text-tight"
+                              disabled={cancelling}
+                              onClick={() => setConfirmCancelId(null)}
+                            >
+                              Never mind
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            className="bs-btn-text-tight"
+                            onClick={() => {
+                              setCancelError(null);
+                              setConfirmCancelId(b.id);
+                            }}
+                          >
+                            Cancel booking
+                          </button>
+                        )}
+                        {confirming && cancelError && (
+                          <p style={{ margin: '8px 0 0', fontSize: 13, color: '#b00020' }}>{cancelError}</p>
+                        )}
                       </div>
                     )}
                   </div>

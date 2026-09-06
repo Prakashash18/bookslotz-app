@@ -50,6 +50,7 @@ export interface MyEventSummary {
 }
 
 export interface OrganiserBookingItem {
+  id: string;
   name: string;
   email: string;
   extraFields: Record<string, string>;
