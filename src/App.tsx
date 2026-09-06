@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Landing from './organiser/Landing';
 import AuthScreen from './organiser/AuthScreen';
+import ResetPassword from './organiser/ResetPassword';
 import { RequireAuth } from './organiser/RequireAuth';
 import OrganiserWizard from './organiser/OrganiserWizard';
 import OrganiserEventPage from './organiser/OrganiserEventPage';
@@ -15,6 +16,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<AuthScreen />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route
           path="/new"
           element={
