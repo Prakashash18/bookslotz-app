@@ -39,6 +39,16 @@ export interface BookingRecord {
   };
 }
 
+export interface MyEventSummary {
+  id: string;
+  slug: string;
+  title: string;
+  durationMinutes: number;
+  totalSlots: number;
+  bookedCount: number;
+  createdAt: string;
+}
+
 export interface OrganiserEvent {
   id: string;
   slug: string;

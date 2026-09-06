@@ -1,6 +1,6 @@
 import { Mark } from '../../components/WizardShell';
 
-export function Welcome({ onStart }: { onStart: () => void }) {
+export function Welcome({ onCreateBooking, onSignIn }: { onCreateBooking: () => void; onSignIn: () => void }) {
   const dots = new Array(18).fill(0);
   return (
     <div className="bs-animate-up">
@@ -25,10 +25,10 @@ export function Welcome({ onStart }: { onStart: () => void }) {
         Consultations, presentations, office hours, parent meetings. One link, no back-and-forth email.
       </p>
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 18, marginTop: 'clamp(26px,5cqw,36px)' }}>
-        <button type="button" className="bs-btn-primary bs-lift" onClick={onStart}>
+        <button type="button" className="bs-btn-primary bs-lift" onClick={onCreateBooking}>
           Create booking
         </button>
-        <button type="button" className="bs-btn-text" onClick={onStart}>
+        <button type="button" className="bs-btn-text" onClick={onSignIn}>
           Sign in
         </button>
       </div>

@@ -26,10 +26,13 @@ Postgres backend.
 - **Email**: confirmation/reschedule/cancellation emails are sent straight
   from Postgres via the `pg_net` extension calling the Resend API, with the
   API key stored in Supabase Vault (never in source or an env var).
-- **No login for either side.** The organiser gets a private
-  `organiser_token` link to their dashboard; a booker gets a private
-  `manage_token` link (emailed to them) to reschedule or cancel. Both are
-  unguessable UUIDs, not exposed anywhere else.
+- **Auth**: organisers have real accounts (Supabase Auth, email/password) so
+  they can log in and see all their events instead of bookmarking a link.
+  Bookers stay login-free — booking, rescheduling, and cancelling all still
+  work purely through the private `manage_token` link emailed to them.
+  Events created before accounts existed (or by an organiser who skips
+  signing in) keep working through their `organiser_token` link too — both
+  access paths are supported side by side.
 
 ## Project layout
 
@@ -39,9 +42,10 @@ src/
                   generator so organiser-side previews match reality),
                   Supabase client + typed RPC wrappers, shared types
   components/     WizardShell (rail/compact-header/sheet), PublicShell, BareShell
-  organiser/      the organiser wizard (welcome → what → avail → duration →
-                  slots → fields → email → review) and the published/
-                  dashboard page
+  organiser/      Landing (public), AuthScreen (login/signup), the wizard
+                  (what → avail → duration → slots → fields → email →
+                  review), MyEvents (account dashboard), and the per-event
+                  published/dashboard page
   public-site/    the public booking flow (event → day → time → details →
                   review → confirmed) and the manage/reschedule/cancel flow
 supabase/
@@ -53,8 +57,11 @@ design/           the original Claude Design handoff bundle (reference only)
 
 | Route | Screen(s) |
 | --- | --- |
-| `/` | Organiser wizard (draft, all client-side until publish) |
-| `/e/:eventId?ot=<organiserToken>` | Organiser's published/dashboard page |
+| `/` | Public landing page |
+| `/login` | Sign in / sign up |
+| `/new` | Organiser wizard (requires login; draft is client-side until publish) |
+| `/dashboard` | "My events" list (requires login) |
+| `/e/:eventId` | Event dashboard — logged-in owner, or `?ot=<organiserToken>` link |
 | `/b/:slug` | Public booking flow |
 | `/b/:slug/booked/:manageToken` | Booking confirmed |
 | `/b/:slug/m/:manageToken` | Manage / reschedule / cancel a booking |
@@ -84,6 +91,13 @@ Sends from `bookings@coastalpatrol.app` (a domain verified in Resend), so
 delivery to real bookers works — not just your own Resend account email.
 If you fork this for a different domain, verify it in Resend and update
 the `from` address in `send_booking_email()`.
+
+Organiser sign-up uses Supabase's own built-in Auth email (a separate
+system from the Resend wiring above) to send the "confirm your email" link
+— this defaults to Supabase's shared, rate-limited sending service, fine
+for low volume. For real usage, configure custom SMTP for Auth in the
+Supabase dashboard (Authentication → Settings), or disable "Confirm email"
+there if you'd rather skip email verification on sign-up entirely.
 
 ## Known gaps (carried over from the design, or deliberately deferred)
 

@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import type { AvailabilityWindow } from './slots';
-import type { BookingRecord, OrganiserEvent, PublicEvent } from './types';
+import type { BookingRecord, MyEventSummary, OrganiserEvent, PublicEvent } from './types';
 
 const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
@@ -102,6 +102,18 @@ export async function cancelBooking(manageToken: string): Promise<BookingRecord>
 
 export async function getOrganiserDashboard(organiserToken: string): Promise<OrganiserEvent | null> {
   const { data, error } = await supabase.rpc('get_organiser_dashboard', { p_organiser_token: organiserToken });
+  if (error) throw new BookSlotApiError(error.message);
+  return data as OrganiserEvent | null;
+}
+
+export async function listMyEvents(): Promise<MyEventSummary[]> {
+  const { data, error } = await supabase.rpc('list_my_events');
+  if (error) throw new BookSlotApiError(error.message);
+  return (data as MyEventSummary[]) ?? [];
+}
+
+export async function getEventForOrganiser(eventId: string): Promise<OrganiserEvent | null> {
+  const { data, error } = await supabase.rpc('get_event_for_organiser', { p_event_id: eventId });
   if (error) throw new BookSlotApiError(error.message);
   return data as OrganiserEvent | null;
 }

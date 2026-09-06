@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { BareShell } from '../components/WizardShell';
-import { getOrganiserDashboard } from '../lib/supabase';
+import { useSession } from '../lib/auth';
+import { getEventForOrganiser, getOrganiserDashboard } from '../lib/supabase';
 import type { OrganiserEvent } from '../lib/types';
 
 type ViewScreen = 'published' | 'dash';
 
 export default function OrganiserEventPage() {
-  useParams(); // eventId lives in the URL for readability; org lookup is via the token
+  const { eventId = '' } = useParams();
   const [search] = useSearchParams();
   const organiserToken = search.get('ot');
   const location = useLocation() as { state?: { justPublished?: boolean } };
   const navigate = useNavigate();
+  const { session, loading: sessionLoading } = useSession();
 
   const [screen, setScreen] = useState<ViewScreen>(location.state?.justPublished ? 'published' : 'dash');
   const [event, setEvent] = useState<OrganiserEvent | null>(null);
@@ -19,9 +21,31 @@ export default function OrganiserEventPage() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (!organiserToken) return;
     let cancelled = false;
-    getOrganiserDashboard(organiserToken)
+
+    // A ?ot= link keeps working with no login required (legacy / shareable path).
+    if (organiserToken) {
+      getOrganiserDashboard(organiserToken)
+        .then((e) => {
+          if (!cancelled) {
+            if (e) setEvent(e);
+            else setError('not_found');
+          }
+        })
+        .catch((e) => !cancelled && setError(e instanceof Error ? e.message : String(e)));
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    // No token: this is the account-based path — require login, then check ownership.
+    if (sessionLoading) return;
+    if (!session) {
+      navigate('/login', { state: { next: `/e/${eventId}` }, replace: true });
+      return;
+    }
+
+    getEventForOrganiser(eventId)
       .then((e) => {
         if (!cancelled) {
           if (e) setEvent(e);
@@ -32,9 +56,9 @@ export default function OrganiserEventPage() {
     return () => {
       cancelled = true;
     };
-  }, [organiserToken]);
+  }, [organiserToken, eventId, session, sessionLoading, navigate]);
 
-  if (!organiserToken || error) {
+  if (error) {
     return (
       <BareShell>
         <div className="bs-animate-up">
@@ -142,8 +166,12 @@ export default function OrganiserEventPage() {
           </div>
         </div>
         <div style={{ marginTop: 22 }}>
-          <button type="button" className="bs-btn-text-tight" onClick={() => navigate('/')}>
-            Start over
+          <button
+            type="button"
+            className="bs-btn-text-tight"
+            onClick={() => navigate(organiserToken ? '/' : '/dashboard')}
+          >
+            {organiserToken ? 'Start over' : 'All your events'}
           </button>
         </div>
       </div>

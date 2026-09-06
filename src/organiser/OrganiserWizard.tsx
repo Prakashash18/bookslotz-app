@@ -4,7 +4,6 @@ import { WizardShell } from '../components/WizardShell';
 import { activeSlots, cappedSlots, generateSlots, type AvailabilityWindow } from '../lib/slots';
 import { createEvent } from '../lib/supabase';
 import { prevScreen, type OrgScreen } from './steps';
-import { Welcome } from './screens/Welcome';
 import { What } from './screens/What';
 import { Availability } from './screens/Availability';
 import { Duration } from './screens/Duration';
@@ -36,7 +35,7 @@ function nextDay(date: string): string {
 }
 
 const INITIAL: WizardState = {
-  screen: 'welcome',
+  screen: 'what',
   title: '',
   desc: '',
   location: '',
@@ -64,7 +63,8 @@ export default function OrganiserWizard() {
   const go = (screen: OrgScreen) => set({ screen });
   const back = () => {
     const p = prevScreen(s.screen);
-    if (p) go(p);
+    if (p === 'welcome' || !p) navigate('/');
+    else go(p);
   };
 
   const all = generateSlots(s.windows, s.duration);
@@ -94,14 +94,6 @@ export default function OrganiserWizard() {
     } finally {
       setPublishing(false);
     }
-  }
-
-  if (s.screen === 'welcome') {
-    return (
-      <WizardShell screen={s.screen} onBack={back} onJump={go} eventTitle={s.title} railMeta={railMeta}>
-        <Welcome onStart={() => go('what')} />
-      </WizardShell>
-    );
   }
 
   return (
