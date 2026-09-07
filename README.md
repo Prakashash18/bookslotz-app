@@ -99,6 +99,41 @@ for low volume. For real usage, configure custom SMTP for Auth in the
 Supabase dashboard (Authentication → Settings), or disable "Confirm email"
 there if you'd rather skip email verification on sign-up entirely.
 
+## Plans and the paywall
+
+Free accounts may own `free_event_limit()` events (currently **1**). Everything
+else — booking, rescheduling, cancelling, the roster, the dashboards — is
+unlimited and unaffected. Events that already exist keep taking bookings
+forever, whether or not the organiser is on a paid plan; the gate is on
+*creating* a booking page, not on running one.
+
+**Where it is enforced.** Inside `create_event`, in Postgres. That is the only
+place that counts. The React app also asks `get_my_plan()` so it can show the
+limit before someone fills in the whole wizard, but that is a courtesy — the
+publishable key ships in the browser bundle, so anything the client checks can
+be skipped by calling the RPC directly.
+
+**Granting Pro.** Presence of a live row in `pro_accounts` means Pro:
+
+```sql
+-- grant, forever
+insert into pro_accounts (user_id, note) values ('<auth.users.id>', 'stripe cs_...');
+-- grant for a year
+insert into pro_accounts (user_id, expires_at, note)
+values ('<auth.users.id>', now() + interval '1 year', 'stripe cs_...');
+-- revoke
+delete from pro_accounts where user_id = '<auth.users.id>';
+```
+
+At this stage that is done by hand when Stripe says someone paid. A webhook
+writing the same row is a drop-in replacement later — nothing else changes.
+
+Every organiser who had created an event before migration `0008` was
+grandfathered to unlimited, so the limit never retroactively broke anyone.
+
+Set `VITE_UPGRADE_URL` to a Stripe Payment Link to give the paywall a checkout
+button. Without it the paywall still enforces; it just explains and stops.
+
 ## Known gaps (carried over from the design, or deliberately deferred)
 
 - No screen currently captures the event **location** — it's in the schema

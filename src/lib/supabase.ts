@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import type { AvailabilityWindow } from './slots';
-import type { BookingRecord, MyEventSummary, OrganiserEvent, PublicEvent, PublicRoster } from './types';
+import type { BookingRecord, MyEventSummary, MyPlan, OrganiserEvent, PublicEvent, PublicRoster } from './types';
 
 const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
@@ -47,6 +47,12 @@ export async function createEvent(input: CreateEventInput): Promise<{ id: string
     p_organiser_email: input.organiserEmail || null,
   });
   return unwrap(data, error);
+}
+
+/** The signed-in organiser's plan. A courtesy for the UI — create_event enforces the limit itself. */
+export async function getMyPlan(): Promise<MyPlan> {
+  const { data, error } = await supabase.rpc('get_my_plan');
+  return unwrap(data as MyPlan | null, error);
 }
 
 export async function getPublicEvent(slug: string): Promise<PublicEvent | null> {

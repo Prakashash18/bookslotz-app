@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { WizardShell } from '../components/WizardShell';
 import { activeSlots, cappedSlots, generateSlots, type AvailabilityWindow } from '../lib/slots';
-import { createEvent } from '../lib/supabase';
+import type { MyPlan } from '../lib/types';
+import { createEvent, getMyPlan } from '../lib/supabase';
 import { prevScreen, type OrgScreen } from './steps';
 import { What } from './screens/What';
 import { Availability } from './screens/Availability';
@@ -55,6 +56,8 @@ export default function OrganiserWizard() {
   const [s, setS] = useState<WizardState>(INITIAL);
   const [publishing, setPublishing] = useState(false);
   const [publishError, setPublishError] = useState<string | null>(null);
+  // Non-null once the database has refused this publish for hitting the free limit.
+  const [limitPlan, setLimitPlan] = useState<MyPlan | null>(null);
   const navigate = useNavigate();
 
   const set = (patch: Partial<WizardState> | ((st: WizardState) => Partial<WizardState>)) =>
@@ -78,6 +81,7 @@ export default function OrganiserWizard() {
   async function publish() {
     setPublishing(true);
     setPublishError(null);
+    setLimitPlan(null);
     try {
       const created = await createEvent({
         title: s.title,
@@ -93,7 +97,13 @@ export default function OrganiserWizard() {
       });
       navigate(`/e/${created.id}?ot=${created.organiserToken}`, { state: { justPublished: true } });
     } catch (e) {
-      setPublishError(e instanceof Error ? e.message : String(e));
+      const message = e instanceof Error ? e.message : String(e);
+      setPublishError(message);
+      // create_event is the paywall. When it refuses, swap the error text for
+      // the upgrade card — and read the real numbers rather than assuming them.
+      if (message.includes('event_limit_reached')) {
+        setLimitPlan(await getMyPlan().catch(() => null));
+      }
     } finally {
       setPublishing(false);
     }
@@ -201,6 +211,7 @@ export default function OrganiserWizard() {
           fields={s.fields}
           publishing={publishing}
           error={publishError}
+          plan={limitPlan}
           onPublish={publish}
         />
       )}

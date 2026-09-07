@@ -87,3 +87,12 @@ export interface OrganiserEvent {
   seatBooked: boolean[];
   bookings: OrganiserBookingItem[];
 }
+
+export interface MyPlan {
+  isPro: boolean;
+  /** Set whenever a plan row exists, live or lapsed, so the UI can say "expired on …". */
+  expiresAt: string | null;
+  eventCount: number;
+  freeEventLimit: number;
+  canCreateEvent: boolean;
+}

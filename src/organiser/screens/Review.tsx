@@ -1,3 +1,4 @@
+import { UpgradeCard } from '../../components/UpgradeCard';
 import { dm, dmShort, slugify } from '../../lib/slots';
 
 export function Review({
@@ -8,6 +9,7 @@ export function Review({
   fields,
   publishing,
   error,
+  plan,
   onPublish,
 }: {
   title: string;
@@ -18,6 +20,8 @@ export function Review({
   fields: string[];
   publishing: boolean;
   error: string | null;
+  /** Set once the database has refused this publish for hitting the free limit. */
+  plan: { eventCount: number; freeEventLimit: number } | null;
   onPublish: () => void;
 }) {
   const shownTitle = title || 'Untitled event';
@@ -167,10 +171,19 @@ export function Review({
         </div>
       </div>
 
-      {error && (
-        <p style={{ margin: '18px 0 0', fontSize: '13.5px', color: '#b00020' }}>
-          Couldn't publish: {error}. Please try again.
-        </p>
+      {plan ? (
+        <div style={{ marginTop: 22 }}>
+          <UpgradeCard eventCount={plan.eventCount} freeEventLimit={plan.freeEventLimit} compact />
+          <p style={{ margin: '14px 0 0', fontSize: '13.5px', color: 'var(--bs-label)' }}>
+            Nothing you've filled in is lost — upgrade in another tab, then hit Publish again.
+          </p>
+        </div>
+      ) : (
+        error && (
+          <p style={{ margin: '18px 0 0', fontSize: '13.5px', color: '#b00020' }}>
+            Couldn't publish: {error}. Please try again.
+          </p>
+        )
       )}
 
       <div className="bs-spacer" />

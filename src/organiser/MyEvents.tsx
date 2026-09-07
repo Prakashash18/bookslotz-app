@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BareShell, Mark } from '../components/WizardShell';
+import { UpgradeCard } from '../components/UpgradeCard';
 import { signOut } from '../lib/auth';
-import { listMyEvents } from '../lib/supabase';
-import type { MyEventSummary } from '../lib/types';
+import { getMyPlan, listMyEvents } from '../lib/supabase';
+import type { MyEventSummary, MyPlan } from '../lib/types';
 
 export default function MyEvents() {
   const navigate = useNavigate();
   const [events, setEvents] = useState<MyEventSummary[] | null>(null);
+  const [plan, setPlan] = useState<MyPlan | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -15,6 +17,13 @@ export default function MyEvents() {
     listMyEvents()
       .then((e) => !cancelled && setEvents(e))
       .catch((e) => !cancelled && setError(e instanceof Error ? e.message : String(e)));
+    // The limit is shown here, before anyone fills in the wizard — but it is
+    // create_event that actually enforces it.
+    getMyPlan()
+      .then((p) => !cancelled && setPlan(p))
+      .catch(() => {
+        /* plan is decoration; a failure here must not block the list */
+      });
     return () => {
       cancelled = true;
     };
@@ -106,9 +115,21 @@ export default function MyEvents() {
         )}
 
         <div style={{ marginTop: 28 }}>
-          <button type="button" className="bs-btn-primary" onClick={() => navigate('/new')}>
-            New event
-          </button>
+          {plan && !plan.canCreateEvent ? (
+            <UpgradeCard eventCount={plan.eventCount} freeEventLimit={plan.freeEventLimit} compact />
+          ) : (
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 18 }}>
+              <button type="button" className="bs-btn-primary" onClick={() => navigate('/new')}>
+                New event
+              </button>
+              {plan && !plan.isPro && (
+                <span style={{ fontSize: '13.5px', color: '#8b8379' }}>
+                  Free plan · {plan.eventCount} of {plan.freeEventLimit} booking{' '}
+                  {plan.freeEventLimit === 1 ? 'page' : 'pages'} used
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </BareShell>
